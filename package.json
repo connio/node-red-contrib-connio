@@ -1,0 +1,22 @@
+{
+  "name": "node-red-contrib-connio",
+  "version": "0.1.0",
+  "description": "A Node-RED node for Connio",
+  "repository": "git@github.com:connio/node-red-contrib-connio.git",
+  "author": "Connio",
+  "license": "MIT",
+  "private": true,
+  "keywords": [
+    "connio"
+  ],
+  "contributors": [
+    {
+      "name": "Ivan Gerasimov"
+    }
+  ],
+  "node-red": {
+    "nodes": {
+      "connio": "connio.js"
+    }
+  }
+}
