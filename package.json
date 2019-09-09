@@ -1,13 +1,13 @@
 {
   "name": "node-red-contrib-connio",
-  "version": "0.1.0",
-  "description": "A Node-RED node for Connio",
+  "version": "0.1.0-alpha.1",
+  "description": "Node-RED nodes for Connio",
   "repository": "git@github.com:connio/node-red-contrib-connio.git",
-  "author": "Connio",
+  "author": "Connio Inc.",
   "license": "MIT",
-  "private": true,
   "keywords": [
-    "connio"
+    "connio",
+    "node-red"
   ],
   "contributors": [
     {
