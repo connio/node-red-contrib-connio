@@ -1,0 +1,966 @@
+<!-- connio -->
+<script type="text/javascript">
+  window.connio = {};
+</script>
+
+<!-- constants -->
+<script type="text/javascript">
+  const ElementId = {
+    AUTH: makeId('node-input-auth'),
+
+    ACCOUNT: makeId('node-input-account'),
+
+    CLIENT_ID: makeId('node-input-clientId'),
+    API_KEY_ID: makeId('node-input-apiKeyId'),
+    API_KEY_SECRET: makeId('node-input-apiKeySecret'),
+
+    APP: makeId('node-input-app'),
+
+    TOPIC: makeId('node-input-topic'),
+    TOPIC_PREFIX: makeId('topicPrefix'),
+    TOPIC_VALUE: makeId('topicValue'),
+  };
+
+  const PropertyState = {
+    SELECTED: ['selected', true],
+    DISABLED: ['disabled', true],
+    ENABLED: ['disabled', false],
+  };
+
+  const EventType = {
+    CLICK: 'click',
+    CHANGE: 'change',
+  };
+
+  function makeId(name) {
+    return `#${name}`;
+  }
+
+  /**
+   * @todo Implementation
+   * @example
+   * const { foo, bar } = require(window);
+   */
+  function require(...items) {
+    return;
+  }
+
+  /**
+   * @todo Implementation
+   * @example
+   * export({
+   *  foo,
+   *  bar,
+   * })
+   * const { foo, bar } = require(window);
+   */
+  function _export(...items) {
+    return;
+  }
+
+  Object.assign(window.connio, {
+    ElementId,
+    PropertyState,
+    EventType,
+    require,
+  });
+</script>
+
+<!-- ConnioAPI -->
+<script type="text/javascript">
+  class ConnioAPI {
+    authNodeId = undefined;
+    credentials = {
+      username: undefined,
+      password: undefined,
+    };
+    apiKey = {
+      id: undefined,
+      secret: undefined,
+    };
+
+    constructor({ $, authNodeId, username, password, url: authUrl, apiUrl }) {
+      Object.assign(this, {
+        $,
+        authUrl,
+        apiUrl,
+        headers: {
+          'connio-auth-url': authUrl,
+          'connio-api-url': apiUrl,
+        },
+      });
+
+      if (username && password) {
+        Object.assign(this, {
+          credentials: {
+            username,
+            password,
+          },
+          headers: {
+            ...this.headers,
+            'connio-username': username,
+            'connio-password': password,
+          },
+        });
+      } else {
+        Object.assign(this, {
+          authNodeId,
+          headers: {
+            ...this.headers,
+            'auth-node-id': authNodeId,
+          },
+        });
+      }
+    }
+
+    _get(url) {
+      console.log('connioApi :: _get');
+
+      return this.$.ajax({
+        url,
+        json: true,
+        headers: this.headers,
+      });
+    }
+
+    login() {
+      console.log('connioApi :: login');
+
+      return this._get('login')
+        .done((response) => {
+          console.log('connioApi :: login :: SUCCESS');
+
+          Object.assign(this, {
+            accountId: response.user.accountId,
+            apiKey: {
+              username: response.apiKey.id,
+              password: response.apiKey.secret,
+            },
+            headers: {
+              ...this.headers,
+              'connio-key-id': response.apiKey.id,
+              'connio-key-secret': response.apiKey.secret,
+            },
+          });
+
+          return response;
+        })
+        .fail((error) => {
+          console.log('connioApi :: login :: ERROR');
+
+          return error;
+        });
+    }
+
+    fetchAccount() {
+      console.log('ConnioAPI :: fetchAccount');
+
+      return this._get(`accounts?id=${this.accountId}`);
+    }
+
+    fetchApiClients() {
+      console.log('ConnioAPI :: fetchApiClients');
+
+      return this._get('api-clients');
+    }
+
+    fetchApiKey(clientId) {
+      console.log('ConnioAPI :: fetchApiKey');
+
+      return this._get(`api-key?clientId=${clientId}`);
+    }
+
+    fetchApp(id) {
+      console.log('ConnioAPI :: fetchApp');
+
+      return this._get(`app?id=${id}`);
+    }
+
+    fetchApps(appIdList = []) {
+      return new Promise((resolve, reject) => {
+        const requests = Promise.all(appIdList.map((id) => this.fetchApp(id)));
+
+        return requests.then(resolve);
+      });
+    }
+  }
+
+  Object.assign(window.connio, {
+    ConnioAPI,
+  });
+</script>
+
+<!-- Topic -->
+<script type="text/javascript">
+  class Topic {
+    static _getValue(node) {
+      return node.val();
+    }
+
+    static parse(topicNode) {
+      const [
+        accountName,
+        app,
+        appName,
+        devices,
+        ...topicValue
+      ] = this._getValue(topicNode).split('/');
+
+      return [
+        `${accountName}/${app}/${appName}/${devices}/`,
+        topicValue.join('/'),
+      ];
+    }
+
+    static unparse(prefixNode, valueNode) {
+      const prefix = this._getValue(prefixNode);
+      const value = this._getValue(valueNode);
+
+      return `${prefix}${value}`;
+    }
+
+    static makeTopicPrefix(account = '{account}', app = '{app}') {
+      return [account || '{account}', 'apps', app || '{app}', 'devices', '']
+        .join('/')
+        .toLowerCase();
+    }
+  }
+
+  Object.assign(window.connio, {
+    Topic,
+  });
+</script>
+
+<!-- connio-mqtt node -->
+<script type="text/javascript">
+  const {
+    ConnioAPI,
+    ElementId,
+    EventType,
+    PropertyState,
+    Topic,
+  } = window.connio;
+
+  const NODE_ID = 'connio-mqtt';
+  const DEFAULT_NAME = 'Connio MQTT';
+
+  /** @todo implementation */
+  function selectorBuilder({
+    node,
+    list = [],
+    selectMessage = 'Select',
+    emptyMessage = 'No item found',
+    isSelectedCb,
+  }) {
+    if (!appList.length) {
+      return $app
+        .prop(...PropertyState.DISABLED)
+        .empty()
+        .append(makeDefaultOption(emptyMessage));
+    }
+
+    return $app
+      .empty()
+      .append([
+        makeDefaultOption(selectMessage),
+        ...appList.map((item) =>
+          makeOption(
+            item.name,
+            item.friendlyName || item.name,
+            this.app === item.name,
+          ),
+        ),
+      ])
+      .prop(...PropertyState.ENABLED);
+  }
+
+  function makeOption(value, label, selected = false) {
+    return $('<option></option>')
+      .val(value)
+      .text(label)
+      .prop('selected', selected);
+  }
+
+  function makeDefaultOption(label) {
+    return makeOption('', label)
+      .prop(...PropertyState.SELECTED)
+      .prop(...PropertyState.DISABLED);
+  }
+
+  function makeSyncValue(_this) {
+    return function(node, valueName, value) {
+      node.val(value);
+      _this[valueName] = node.val();
+    };
+  }
+
+  let MqttNode = {
+    category: 'input',
+    color: '#a6bbcf',
+    defaults: {
+      auth: {
+        type: 'connio-credentials',
+      },
+      name: {
+        value: DEFAULT_NAME,
+      },
+      account: {
+        required: true,
+      },
+      clientId: {
+        required: true,
+      },
+      apiKeyId: {
+        required: true,
+      },
+      apiKeySecret: {
+        required: true,
+      },
+      app: {
+        required: true,
+      },
+      topic: {
+        value: `${Topic.makeTopicPrefix()}#`,
+        required: true,
+      },
+    },
+    inputs: 0,
+    outputs: 1,
+    icon: 'connio.png',
+    label() {
+      return this.name || DEFAULT_NAME;
+    },
+    oneditprepare() {
+      let connioApi;
+      let syncValue = makeSyncValue(this);
+      let isFirstAuthChange = true;
+
+      let $auth = $(ElementId.AUTH);
+      let $account = $(ElementId.ACCOUNT);
+
+      let $clientId = $(ElementId.CLIENT_ID);
+      let $apiKeyId = $(ElementId.API_KEY_ID);
+      let $apiKeySecret = $(ElementId.API_KEY_SECRET);
+
+      let $app = $(ElementId.APP);
+
+      let $topicPrefix = $(ElementId.TOPIC_PREFIX);
+      let $topicValue = $(ElementId.TOPIC_VALUE);
+      let $topic = $(ElementId.TOPIC);
+
+      let makeApiClientSelector = (apiClientList = []) => {
+        if (!apiClientList.length) {
+          return $clientId
+            .prop(...PropertyState.DISABLED)
+            .empty()
+            .append(makeDefaultOption('No API Client found'));
+        }
+
+        $clientId
+          .empty()
+          .append([
+            makeDefaultOption('Select API Client'),
+            ...apiClientList.map((item) =>
+              makeOption(
+                item.id,
+                item.friendlyName || item.name,
+                this.clientId === item.id,
+              ),
+            ),
+          ])
+          .prop(...PropertyState.ENABLED);
+      };
+
+      let makeAppSelector = (appList = []) => {
+        if (!appList.length) {
+          return $app
+            .prop(...PropertyState.DISABLED)
+            .empty()
+            .append(makeDefaultOption('No App found'));
+        }
+
+        return $app
+          .empty()
+          .append([
+            makeDefaultOption('Select App'),
+            ...appList.map((item) =>
+              makeOption(
+                item.name,
+                item.friendlyName || item.name,
+                this.app === item.name,
+              ),
+            ),
+          ])
+          .prop(...PropertyState.ENABLED);
+      };
+
+      let authEditClickHandler = () => {
+        const auth = RED.nodes.node(this.auth);
+
+        if (!auth) {
+          console.log('authEditClickHandler :: No auth provided');
+          return;
+        }
+
+        this.prevAuth = {
+          email: auth.email,
+          password: auth.credentials && auth.credentials.password,
+        };
+      };
+
+      $('#node-input-lookup-auth').on(EventType.CLICK, authEditClickHandler);
+
+      let authChangeHandler = () => {
+        console.log('authChangeHandler');
+
+        let nextAuth = $auth.val();
+
+        if (nextAuth === '_ADD_') {
+          syncValue($auth, 'auth', nextAuth);
+          emptyAuthSelectionFlow();
+
+          return;
+        }
+
+        if (this.auth === nextAuth) {
+          console.log(this.auth === nextAuth);
+
+          if (!isFirstAuthChange && !this.prevAuth) {
+            return;
+          }
+
+          if (this.prevAuth) {
+            let _nextAuth = RED.nodes.node(nextAuth);
+
+            /** @description Handle "edit" button click */
+            if (
+              _nextAuth.credentials &&
+              _nextAuth.email === this.prevAuth.email &&
+              _nextAuth.credentials.password === this.prevAuth.password
+            ) {
+              console.log('No credentials changes');
+              return;
+            }
+          }
+        }
+
+        syncValue($auth, 'auth', nextAuth);
+
+        let { email, credentials, connioConfig } = RED.nodes.node(nextAuth);
+
+        if (!connioConfig) {
+          console.log('authChangeHandler :: No config provided');
+          return;
+        }
+
+        let { url, apiUrl } = RED.nodes.node(connioConfig);
+
+        if (!url) {
+          console.log('authChangeHandler :: No Auth URL provided');
+          return;
+        }
+
+        if (!apiUrl) {
+          console.log('authChangeHandler :: No Auth URL provided');
+          return;
+        }
+
+        console.log('authChangeHandler :: Auth in progress');
+
+        if (credentials && credentials.password) {
+          connioApi = new ConnioAPI({
+            $,
+            url,
+            apiUrl,
+            username: email,
+            password: credentials.password,
+          });
+        } else {
+          connioApi = new ConnioAPI({
+            $,
+            url,
+            apiUrl,
+            authNodeId: this.auth,
+          });
+        }
+
+        if (isFirstAuthChange) {
+          isFirstAuthChange = false;
+
+          loadingFlow();
+        } else {
+          authSelectionFlow();
+        }
+      };
+
+      let clientIdChangeHandler = () => {
+        console.log('clientIdChangeHandler');
+
+        let nextClientTd = $clientId.val();
+
+        if (!nextClientTd) {
+          return;
+        }
+
+        if (nextClientTd === this.clientId) {
+          return;
+        }
+
+        syncValue($clientId, 'clientId', nextClientTd);
+
+        apiClientSelectionFlow();
+      };
+
+      let appChangeHandler = () => {
+        console.log('appChangeHandler');
+
+        let nextApp = $app.val();
+
+        if (!nextApp) {
+          return;
+        }
+
+        if (nextApp === this.app) {
+          return;
+        }
+
+        syncValue($app, 'app', nextApp);
+        syncValue(
+          $topicPrefix,
+          'topicPrefix',
+          Topic.makeTopicPrefix(this.account, this.app),
+        );
+      };
+
+      /**
+       * @stable
+       * @description
+       * …
+       */
+      let emptyAuthSelectionFlow = () => {
+        $account.prop(...PropertyState.DISABLED);
+        $clientId.prop(...PropertyState.DISABLED);
+        $app.prop(...PropertyState.DISABLED);
+        $topicValue.prop(...PropertyState.DISABLED);
+
+        syncValue($account, 'account', '');
+        syncValue($clientId, 'clientId', '');
+        syncValue($apiKeyId, 'apiKeyId', '');
+        syncValue($apiKeySecret, 'apiKeySecret', '');
+        syncValue($app, 'app', '');
+        syncValue($topicPrefix, 'topicPrefix', Topic.makeTopicPrefix());
+        syncValue($topicValue, 'topicValue', '#');
+      };
+
+      /**
+       * @stable
+       * @todo Make sure that fail fall through to the latests handler
+       * @description
+       * set "$account" to "Disabled" state
+       * set "$clientId" to "Disabled" state
+       * set "$app" to "Disabled" state
+       * set "$topicValue" to "Disabled" state
+       *
+       * connioApi.login
+       *  => SUCCESS
+       *  => ERROR
+       * …
+       */
+      let loadingFlow = () => {
+        console.log('loadingFlow');
+
+        $auth.prop(...PropertyState.DISABLED);
+
+        $account.prop(...PropertyState.DISABLED);
+        syncValue($account, 'account', 'Loading…');
+
+        $clientId
+          .prop(...PropertyState.DISABLED)
+          .empty()
+          .append(makeDefaultOption('Select API Client'));
+
+        $app
+          .prop(...PropertyState.DISABLED)
+          .empty()
+          .append(makeDefaultOption('Select App'));
+
+        $topicValue.prop(...PropertyState.DISABLED);
+
+        connioApi
+          .login()
+          .then(() => {
+            connioApi.fetchAccount().then((account) => {
+              syncValue($account, 'account', account.name);
+
+              if (this.topic) {
+                let [topicPrefix, topicValue] = Topic.parse($topic);
+
+                syncValue($topicPrefix, 'topicPrefix', topicPrefix);
+                syncValue($topicValue, 'topicValue', topicValue);
+              } else {
+                syncValue(
+                  $topicPrefix,
+                  'topicPrefix',
+                  Topic.makeTopicPrefix(account.name),
+                );
+                syncValue($topicValue, 'topicValue', '#');
+              }
+
+              $topicValue.prop(...PropertyState.ENABLED);
+
+              $clientId
+                .prop(...PropertyState.DISABLED)
+                .empty()
+                .append(makeDefaultOption('Loading…'));
+
+              connioApi.fetchApiClients().then((apiClientList) => {
+                makeApiClientSelector(apiClientList);
+
+                if (this.clientId) {
+                  $auth.prop(...PropertyState.DISABLED);
+                  $clientId.prop(...PropertyState.DISABLED);
+
+                  $app
+                    .prop(...PropertyState.DISABLED)
+                    .empty()
+                    .append(makeDefaultOption('Loading…'));
+
+                  return connioApi
+                    .fetchApiKey(this.clientId)
+                    .then(({ appList: appIdList }) => {
+                      connioApi.fetchApps(appIdList).then((appList) => {
+                        $auth.prop(...PropertyState.ENABLED);
+                        $clientId.prop(...PropertyState.ENABLED);
+
+                        makeAppSelector(appList);
+                      });
+                    });
+                }
+
+                $auth.prop(...PropertyState.ENABLED);
+              });
+            });
+          })
+          .fail(() => {
+            $auth.prop(...PropertyState.ENABLED);
+
+            syncValue($account, 'account', 'Error, please try again');
+          });
+      };
+
+      /**
+       * @stable
+       * @description
+       * reset "account"
+       * reset "clientId"
+       * reset "apiKeyId"
+       * reset "apiKeySecret"
+       * reset "app"
+       * reset "topic"
+       * reset "topicPrefix" to account only
+       * reset "topicValue" to '#' (all)
+       *
+       * set "auth" selector to "Disabled"
+       * set "account" to "Loading"
+       * set "clientId" selector to "Initial (Disabled)" state
+       * set "app" selector to "Initial" state
+       * ↓
+       * fetchAccount
+       *   => SUCCESS =>
+       *   ↓
+       *     => set "account" field
+       *     => set "topicPrefix" field to "account"
+       *     => set "clientId" selector to "Loading (Disabled)" state
+       *     => fetchApiClients
+       *       => SUCCESS
+       *       ↓
+       *         => create "clientId" selector
+       *         => set "auth" selector to "Enabled"
+       *       => ERROR => ?
+       *   => ERROR => ?
+       */
+      let authSelectionFlow = () => {
+        syncValue($account, 'account', '');
+        syncValue($clientId, 'clientId', '');
+        syncValue($apiKeyId, 'apiKeyId', '');
+        syncValue($apiKeySecret, 'apiKeySecret', '');
+        syncValue($app, 'app', '');
+
+        syncValue($topic, 'topic', '');
+        syncValue(
+          $topicPrefix,
+          'topicPrefix',
+          Topic.makeTopicPrefix(this.account),
+        );
+        syncValue($topicValue, 'topicValue', '#');
+
+        $auth.prop(...PropertyState.DISABLED);
+
+        $account.val('Loading…');
+
+        $clientId
+          .prop(...PropertyState.DISABLED)
+          .empty()
+          .append(makeDefaultOption('Select API Client'));
+
+        $app
+          .prop(...PropertyState.DISABLED)
+          .empty()
+          .append(makeDefaultOption('Select App'));
+
+        connioApi
+          .login()
+          .then(() => {
+            connioApi.fetchAccount().then((account) => {
+              syncValue($account, 'account', account.name);
+              syncValue(
+                $topicPrefix,
+                'topicPrefix',
+                Topic.makeTopicPrefix(this.account),
+              );
+            });
+
+            $clientId
+              .prop(...PropertyState.DISABLED)
+              .empty()
+              .append(makeDefaultOption('Loading…'));
+
+            connioApi.fetchApiClients().then((apiClientList) => {
+              makeApiClientSelector(apiClientList);
+
+              $auth.prop(...PropertyState.ENABLED);
+            });
+          })
+          .fail(() => {
+            $auth.prop(...PropertyState.ENABLED);
+
+            syncValue($account, 'account', 'Auth error, try again');
+          });
+      };
+
+      /**
+       * @stable
+       * @description
+       * reset "apiKeyId"
+       * reset "apiKeySecret"
+       * reset "app"
+       * reset "topic"
+       * reset "topicPrefix" to account only
+       * reset "topicValue" to '#' (all)
+       *
+       * set "auth" to "Disabled" state
+       * set "clientId" to "Disabled" state
+       * set "app" selector to "Loading (Disabled)" state
+       * ↓
+       * fetch ApiKey
+       *   => SUCCESS =>
+       *   ↓
+       *     set "apiKeyId" value
+       *     set "apiKeySecret" value
+       *
+       *     fetch apps
+       *       => SUCCESS =>
+       *       ↓
+       *         create "app" selector
+       *         set "auth" to "Disabled" state
+       *         set "clientId" selector to "Enabled" state
+       *       => ERROR => ?
+       *   => ERROR => ?
+       */
+      let apiClientSelectionFlow = () => {
+        syncValue($apiKeyId, 'apiKeyId', '');
+        syncValue($apiKeySecret, 'apiKeySecret', '');
+        syncValue($app, 'app', '');
+
+        syncValue($topic, 'topic', '');
+        syncValue(
+          $topicPrefix,
+          'topicPrefix',
+          Topic.makeTopicPrefix(this.account),
+        );
+        syncValue($topicValue, 'topicValue', '#');
+
+        $auth.prop(...PropertyState.DISABLED);
+        $clientId.prop(...PropertyState.DISABLED);
+
+        $app
+          .prop(...PropertyState.DISABLED)
+          .empty()
+          .append(makeDefaultOption('Loading…'));
+
+        connioApi
+          .fetchApiKey(this.clientId)
+          .then(({ id, secret, appList: appIdList }) => {
+            syncValue($apiKeyId, 'apiKeyId', id);
+            syncValue($apiKeySecret, 'apiKeySecret', secret);
+
+            return connioApi.fetchApps(appIdList).then((appList) => {
+              makeAppSelector(appList);
+
+              $auth.prop(...PropertyState.ENABLED);
+              $clientId.prop(...PropertyState.ENABLED);
+            });
+          });
+      };
+
+      /**
+       * @stable
+       * @description
+       * …
+       */
+      let init = () => {
+        console.log('init');
+
+        Object.assign(this, {
+          backup: {
+            account: this.account,
+            apiKeyId: this.apiKeyId,
+            apiKeySecret: this.apiKeySecret,
+            app: this.app,
+            auth: this.auth,
+            clientId: this.clientId,
+            // TODO: better "topic" backup management
+            topic: this.topic,
+          },
+        });
+
+        /** @event $auth change */
+        $auth.on(EventType.CHANGE, authChangeHandler.bind(this));
+
+        /** @event $clientId change */
+        $clientId.on(EventType.CHANGE, clientIdChangeHandler.bind(this));
+
+        /** @event $app change */
+        $app.on(EventType.CHANGE, appChangeHandler.bind(this));
+      };
+
+      init();
+    },
+    oneditcancel() {
+      console.log('oneditcancel');
+
+      this.prevAuth = undefined;
+
+      Object.assign(this, {
+        ...this.backup,
+      });
+    },
+    oneditsave() {
+      console.log('oneditcancel');
+
+      this.prevAuth = undefined;
+
+      makeSyncValue(this)(
+        $('#node-input-topic'),
+        'topic',
+        Topic.unparse($('#topicPrefix'), $('#topicValue')),
+      );
+    },
+  };
+
+  RED.nodes.registerType(NODE_ID, MqttNode);
+</script>
+
+<script type="text/x-red" data-template-name="connio-mqtt">
+  <div class="form-row">
+    <label for="node-input-auth">
+      <!-- <i class="icon-tag"></i> -->
+      Credentials
+    </label>
+
+    <input type="text" id="node-input-auth" placeholder="Credentials">
+  </div>
+
+  <div id="logged-in-section">
+    <div class="form-row">
+      <label for="node-input-account">
+        <!-- <i class="icon-tag"></i> -->
+        Account
+      </label>
+      <!-- <br> -->
+
+      <input type="text" id="node-input-account" readonly>
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-clientId">
+        <!-- <i class="icon-tag"></i> -->
+        API Client
+      </label>
+      <!-- <br> -->
+
+      <select id="node-input-clientId">
+        <option value="" selected disabled>Select API Client</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-app">
+        <!-- <i class="icon-tag"></i> -->
+        App
+      </label>
+      <!-- <br> -->
+
+      <select id="node-input-app" disabled>
+        <option value="" selected disabled>Select App</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="topicValue">
+        <!-- <i class="icon-tag"></i> -->
+        Topic
+      </label>
+      <br>
+
+      <div style="display: flex">
+        <input
+          type="text"
+          id="topicPrefix"
+          style="
+            width: auto;
+
+            flex-grow: 4;
+
+            border-top-right-radius: 0;
+            border-right: 0;
+            border-bottom-right-radius: 0;
+          "
+          readonly
+        >
+
+        <input
+          type="text"
+          id="topicValue"
+          style="
+            width: auto;
+
+            flex-grow: 3;
+
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          "
+        >
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="form-row">
+      <label for="node-input-name">
+        <!-- <i class="icon-tag"></i> -->
+        Name
+      </label>
+
+      <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+  </div>
+
+  <input type="hidden" id="node-input-topic">
+  <input type="hidden" id="node-input-apiKeyId">
+  <input type="hidden" id="node-input-apiKeySecret">
+</script>
+
+<script type="text/x-red" data-help-name="connio-mqtt">
+  <p>Connio MQTT node</p>
+</script>

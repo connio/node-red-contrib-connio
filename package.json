@@ -1,0 +1,36 @@
+{
+  "name": "node-red-contrib-connio",
+  "version": "0.1.0-alpha.1",
+  "description": "Node-RED nodes for Connio",
+  "repository": "git@github.com:connio/node-red-contrib-connio.git",
+  "author": "Connio Inc.",
+  "license": "MIT",
+  "keywords": [
+    "connio",
+    "node-red"
+  ],
+  "contributors": [
+    {
+      "name": "Ivan Gerasimov"
+    }
+  ],
+  "scripts": {
+    "start": "yarn browser-sync start -c .browsersyncrc.js"
+  },
+  "node-red": {
+    "nodes": {
+      "connio-config": "connio-config.js",
+      "connio-credentials": "connio-credentials.js",
+      "connio": "connio.js"
+    }
+  },
+  "dependencies": {
+    "dotenv": "8.1.0",
+    "mqtt": "3.0.0",
+    "request": "2.88.0",
+    "request-promise-native": "1.0.7"
+  },
+  "devDependencies": {
+    "browser-sync": "2.26.7"
+  }
+}
