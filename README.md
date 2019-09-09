@@ -1,2 +1,3 @@
-# nodered-module
-Node-Red module for Connio nodes
+# Node-RED module
+
+Node-RED module for Connio nodes
