@@ -11,6 +11,12 @@ function _makeBasicHttpAuth(username, password) {
   return `Basic ${token}`;
 }
 
+function log(...args) {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(...args);
+  }
+}
+
 /**
  * @param {string} username
  * @param {string} password
@@ -18,7 +24,7 @@ function _makeBasicHttpAuth(username, password) {
  * @returns {Promise<{ user: Object, apiKey: Object }>}
  */
 function login(email, password, url) {
-  console.log('utils :: login');
+  log('utils :: login');
 
   const defaultRequestParams = {
     method: 'POST',
@@ -47,17 +53,18 @@ function login(email, password, url) {
     },
   })
     .then((response) => {
-      console.log('utils :: login :: SUCCESS');
+      log('utils :: login :: SUCCESS');
 
       return response;
     })
     .catch((error) => {
-      console.log('utils :: login :: ERROR');
+      log('utils :: login :: ERROR');
 
       return error;
     });
 }
 
 module.exports = {
+  log,
   login,
 };
