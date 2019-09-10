@@ -21,7 +21,7 @@
     "nodes": {
       "connio-config": "nodes/config/config.js",
       "connio-credentials": "nodes/credentials/credentials.js",
-      "connio": "nodes/mqtt/mqtt.js"
+      "connio-mqtt": "nodes/mqtt/mqtt.js"
     }
   },
   "dependencies": {
