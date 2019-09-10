@@ -1,7 +1,7 @@
 const request = require('request-promise-native');
 const mqtt = require('mqtt');
 
-const { login } = require('./utils');
+const { log, login } = require('../utils');
 
 const NODE_ID = 'connio-mqtt';
 
@@ -119,7 +119,7 @@ module.exports = function(RED) {
   RED.nodes.registerType(NODE_ID, MqttNode);
 
   RED.httpAdmin.get('/login', (req, res) => {
-    console.log('httpAdmin :: /login');
+    log('httpAdmin :: /login');
 
     let requestPayload = [];
 
@@ -143,7 +143,7 @@ module.exports = function(RED) {
 
     return login(...requestPayload)
       .then((response) => {
-        console.log('httpAdmin :: /login :: SUCCESS');
+        log('httpAdmin :: /login :: SUCCESS');
 
         if (response.statusCode === 401) {
           return Promise.reject(response);
@@ -157,7 +157,7 @@ module.exports = function(RED) {
   });
 
   RED.httpAdmin.get('/accounts', function(req, res) {
-    console.log('httpAdmin :: /accounts');
+    log('httpAdmin :: /accounts');
 
     let apiUrl = getApiUrl(req.headers);
     let { username, password } = getCredentials(req.headers);
@@ -170,7 +170,7 @@ module.exports = function(RED) {
       })
       .auth(username, password)
       .then((response) => {
-        console.log('httpAdmin :: /accounts :: SUCCESS');
+        log('httpAdmin :: /accounts :: SUCCESS');
 
         res.json({
           name: response.name,
