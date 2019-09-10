@@ -1,7 +1,7 @@
 const request = require('request-promise-native');
 const mqtt = require('mqtt');
 
-const { login } = require('./utils');
+const { login } = require('../utils');
 
 const NODE_ID = 'connio-mqtt';
 

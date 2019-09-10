@@ -1,12 +1,12 @@
 module.exports = {
   ui: false,
-  files: ['*.js', '*.html'],
+  files: ['nodes/**/*.js', 'nodes/**/*.html'],
   proxy: {
-    target: "localhost:1880",
-    ws: true
+    target: 'localhost:1880',
+    ws: true,
   },
   ghostMode: false,
   open: false,
   reloadDelay: 5000,
-  minify: false
+  minify: false,
 };

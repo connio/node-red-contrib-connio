@@ -15,13 +15,13 @@
     }
   ],
   "scripts": {
-    "start": "concurrently --kill-others-on-fail 'nodemon -e js,html --exec node-red' 'npx browser-sync start -c .browsersyncrc.js' "
+    "start": "concurrently --kill-others-on-fail 'nodemon -e js,html --watch nodes --exec node-red' 'npx browser-sync start -c .browsersyncrc.js' "
   },
   "node-red": {
     "nodes": {
-      "connio-config": "connio-config.js",
-      "connio-credentials": "connio-credentials.js",
-      "connio": "connio.js"
+      "connio-config": "nodes/config/config.js",
+      "connio-credentials": "nodes/credentials/credentials.js",
+      "connio": "nodes/mqtt/mqtt.js"
     }
   },
   "dependencies": {
