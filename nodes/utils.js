@@ -1,5 +1,5 @@
-const request = require('request-promise-native');
 const path = require('path');
+const request = require('request-promise-native');
 
 require('dotenv').config({
   path: path.resolve(__dirname, '..', '.env'),
