@@ -294,6 +294,102 @@
     };
   }
 
+  function handleConfigUpdate(payload) {
+    try {
+      console.log('handleConfigUpdate');
+
+      let { email, credentials, connioConfig } = RED.nodes.node(this.auth);
+
+      if (!connioConfig) {
+        console.log('authChangeHandler :: No config provided');
+        return;
+      }
+
+      let { url, apiUrl } = payload;
+
+      if (!url) {
+        console.log('authChangeHandler :: No Auth URL provided');
+        return;
+      }
+
+      if (!apiUrl) {
+        console.log('authChangeHandler :: No Auth URL provided');
+        return;
+      }
+
+      console.log('authChangeHandler :: Auth in progress');
+
+      if (credentials && credentials.password) {
+        connioApi = new ConnioAPI({
+          $,
+          url,
+          apiUrl,
+          username: email,
+          password: credentials.password,
+        });
+      } else {
+        connioApi = new ConnioAPI({
+          $,
+          url,
+          apiUrl,
+          authNodeId: this.auth,
+        });
+      }
+
+      this.isUpdated = true;
+    } catch (error) {
+      console.log('handleConfigUpdate :: error', error);
+    }
+  }
+
+  function handleCredentialsUpdate(payload) {
+    try {
+      console.log('handleCredentialsUpdate');
+
+      let { email, credentials, connioConfig } = payload;
+
+      if (!connioConfig) {
+        console.log('authChangeHandler :: No config provided');
+        return;
+      }
+
+      let { url, apiUrl } = RED.nodes.node(connioConfig);
+
+      if (!url) {
+        console.log('authChangeHandler :: No Auth URL provided');
+        return;
+      }
+
+      if (!apiUrl) {
+        console.log('authChangeHandler :: No Auth URL provided');
+        return;
+      }
+
+      console.log('authChangeHandler :: Auth in progress');
+
+      if (credentials && credentials.password) {
+        connioApi = new ConnioAPI({
+          $,
+          url,
+          apiUrl,
+          username: email,
+          password: credentials.password,
+        });
+      } else {
+        connioApi = new ConnioAPI({
+          $,
+          url,
+          apiUrl,
+          authNodeId: this.auth,
+        });
+      }
+
+      this.isUpdated = true;
+    } catch (error) {
+      console.log('handleCredentialsUpdate :: error', error);
+    }
+  }
+
   let MqttNode = {
     category: 'input',
     color: '#a6bbcf',
@@ -394,22 +490,6 @@
           .prop(...PropertyState.ENABLED);
       };
 
-      let authEditClickHandler = () => {
-        const auth = RED.nodes.node(this.auth);
-
-        if (!auth) {
-          console.log('authEditClickHandler :: No auth provided');
-          return;
-        }
-
-        this.prevAuth = {
-          email: auth.email,
-          password: auth.credentials && auth.credentials.password,
-        };
-      };
-
-      $('#node-input-lookup-auth').on(EventType.CLICK, authEditClickHandler);
-
       let authChangeHandler = () => {
         console.log('authChangeHandler');
 
@@ -422,26 +502,10 @@
           return;
         }
 
-        if (this.auth === nextAuth) {
+        if (this.auth === nextAuth && !isFirstAuthChange && !this.isUpdated) {
           console.log(this.auth === nextAuth);
 
-          if (!isFirstAuthChange && !this.prevAuth) {
-            return;
-          }
-
-          if (this.prevAuth) {
-            let _nextAuth = RED.nodes.node(nextAuth);
-
-            /** @description Handle "edit" button click */
-            if (
-              _nextAuth.credentials &&
-              _nextAuth.email === this.prevAuth.email &&
-              _nextAuth.credentials.password === this.prevAuth.password
-            ) {
-              console.log('No credentials changes');
-              return;
-            }
-          }
+          return;
         }
 
         syncValue($auth, 'auth', nextAuth);
@@ -484,8 +548,9 @@
           });
         }
 
-        if (isFirstAuthChange) {
+        if (isFirstAuthChange || this.isUpdated) {
           isFirstAuthChange = false;
+          this.isUpdated = false;
 
           loadingFlow();
         } else {
@@ -824,6 +889,12 @@
           },
         });
 
+        this.handleCredentialsUpdate = handleCredentialsUpdate.bind(this);
+        this.handleConfigUpdate = handleConfigUpdate.bind(this);
+
+        RED.events.on('@credentials/update', this.handleCredentialsUpdate);
+        RED.events.on('@config/update', this.handleConfigUpdate);
+
         /** @event $auth change */
         $auth.on(EventType.CHANGE, authChangeHandler.bind(this));
 
@@ -839,16 +910,18 @@
     oneditcancel() {
       console.log('oneditcancel');
 
-      this.prevAuth = undefined;
+      RED.events.off('@credentials/update', this.handleCredentialsUpdate);
+      RED.events.off('@config/update', this.handleConfigUpdate);
 
       Object.assign(this, {
         ...this.backup,
       });
     },
     oneditsave() {
-      console.log('oneditcancel');
+      console.log('oneditsave');
 
-      this.prevAuth = undefined;
+      RED.events.off('@credentials/update', this.handleCredentialsUpdate);
+      RED.events.off('@config/update', this.handleConfigUpdate);
 
       makeSyncValue(this)(
         $('#node-input-topic'),

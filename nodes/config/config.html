@@ -21,6 +21,21 @@
     label() {
       return this.name;
     },
+    oneditsave() {
+      const nextConfig = {
+        url: $('#node-config-input-url').val(),
+        apiUrl: $('#node-config-input-apiUrl').val(),
+        mqttUrl: $('#node-config-input-mqttUrl').val(),
+      };
+
+      if (
+        nextConfig.url !== this.url ||
+        nextConfig.apiUrl !== this.apiUrl ||
+        nextConfig.mqttUrl !== this.mqttUrl
+      ) {
+        RED.events.emit('@config/update', nextConfig);
+      }
+    },
   };
 
   RED.nodes.registerType(NODE_ID, ConfigNode);
