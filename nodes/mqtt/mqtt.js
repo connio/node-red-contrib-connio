@@ -43,9 +43,9 @@ module.exports = function(RED) {
     this.on('close', () => this.client && this.client.end());
 
     this.status({
-      fill: 'yellow',
+      fill: 'grey',
       shape: 'ring',
-      text: 'Connecting',
+      text: 'node-red:common.status.not-connected',
     });
 
     try {
@@ -61,7 +61,7 @@ module.exports = function(RED) {
         this.status({
           fill: 'green',
           shape: 'ring',
-          text: 'Connected',
+          text: 'node-red:common.status.connected',
         });
 
         this.client.subscribe(this.topic);
@@ -71,7 +71,7 @@ module.exports = function(RED) {
         this.status({
           fill: 'yellow',
           shape: 'ring',
-          text: 'Connecting',
+          text: 'node-red:common.status.connecting',
         });
       });
 
@@ -79,7 +79,7 @@ module.exports = function(RED) {
         this.status({
           fill: 'red',
           shape: 'ring',
-          text: 'Disconnected',
+          text: 'node-red:common.status.disconnected',
         });
       });
 
@@ -99,7 +99,7 @@ module.exports = function(RED) {
           this.status({
             fill: 'red',
             shape: 'ring',
-            text: 'Error',
+            text: 'node-red:common.status.error',
           });
         });
       });
@@ -111,7 +111,7 @@ module.exports = function(RED) {
       this.status({
         fill: 'red',
         shape: 'ring',
-        text: 'Error',
+        text: 'node-red:common.status.error',
       });
     }
   }

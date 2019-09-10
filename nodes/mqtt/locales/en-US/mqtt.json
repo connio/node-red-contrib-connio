@@ -1,3 +1,39 @@
 {
-  "connio-mqtt": {}
+  "common": {
+    "credentials": "Credentials",
+    "loading": "Loading…",
+    "name": "$t(node-red:common.label.name)",
+    "no-entity-found": "No __entity__ found",
+    "select": "Select",
+    "topic": "Topic"
+  },
+  "glossary": {
+    "account": "Account",
+    "api-client": "API Client",
+    "app": "App"
+  },
+  "credentials-field": {
+    "label": "$t(node-red-contrib-connio/connio-mqtt:common.credentials)",
+    "placeholder": "$t(node-red-contrib-connio/connio-mqtt:common.credentials)"
+  },
+  "account-field": {
+    "label": "$t(node-red-contrib-connio/connio-mqtt:glossary.account)"
+  },
+  "api-client-field": {
+    "empty": "$t(node-red-contrib-connio/connio-mqtt:common.no-entity-found)",
+    "label": "$t(node-red-contrib-connio/connio-mqtt:glossary.api-client)",
+    "placeholder": "$t(node-red-contrib-connio/connio-mqtt:common.select) $t(node-red-contrib-connio/connio-mqtt:glossary.api-client)"
+  },
+  "app-field": {
+    "empty": "$t(node-red-contrib-connio/connio-mqtt:common.no-entity-found)",
+    "label": "$t(node-red-contrib-connio/connio-mqtt:glossary.app)",
+    "placeholder": "$t(node-red-contrib-connio/connio-mqtt:common.select) $t(node-red-contrib-connio/connio-mqtt:glossary.app)"
+  },
+  "topic-field": {
+    "label": "$t(node-red-contrib-connio/connio-mqtt:common.topic)"
+  },
+  "name-field": {
+    "label": "$t(node-red-contrib-connio/connio-mqtt:common.name)",
+    "placeholder": "$t(node-red-contrib-connio/connio-mqtt:common.name)"
+  }
 }

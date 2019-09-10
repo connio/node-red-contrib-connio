@@ -1,15 +1,9 @@
-const request = require('request-promise-native');
 const path = require('path');
+const request = require('request-promise-native');
 
 require('dotenv').config({
   path: path.resolve(__dirname, '..', '.env'),
 });
-
-function _makeBasicHttpAuth(username, password) {
-  let token = new Buffer.from(`${username}:${password}`).toString('base64');
-
-  return `Basic ${token}`;
-}
 
 function log(...args) {
   if (process.env.NODE_ENV === 'development') {
@@ -34,16 +28,6 @@ function login(email, password, url) {
     },
     json: true,
   };
-
-  if (process.env.NODE_ENV === 'development') {
-    /** @desc Remove once public auth API is ready */
-    Object.assign(defaultRequestParams.headers, {
-      Authorization: _makeBasicHttpAuth(
-        process.env.IAPI_USERNAME,
-        process.env.IAPI_PASSWORD,
-      ),
-    });
-  }
 
   return request({
     ...defaultRequestParams,
