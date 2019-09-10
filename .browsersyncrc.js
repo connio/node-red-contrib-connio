@@ -1,6 +1,6 @@
 module.exports = {
   ui: false,
-  files: ['nodes/**/*.js', 'nodes/**/*.html'],
+  files: ['nodes/**/*.js', 'nodes/**/*.html', 'nodes/**/*.json'],
   proxy: {
     target: 'localhost:1880',
     ws: true,
