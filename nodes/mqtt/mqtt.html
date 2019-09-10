@@ -449,13 +449,19 @@
           return $clientId
             .prop(...PropertyState.DISABLED)
             .empty()
-            .append(makeDefaultOption('No API Client found'));
+            .append(
+              makeDefaultOption(
+                this._('api-field.empty', {
+                  entity: this._('glossary.api-client'),
+                }),
+              ),
+            );
         }
 
         $clientId
           .empty()
           .append([
-            makeDefaultOption('Select API Client'),
+            makeDefaultOption(this._('api-client-field.placeholder')),
             ...apiClientList.map((item) =>
               makeOption(
                 item.id,
@@ -472,13 +478,19 @@
           return $app
             .prop(...PropertyState.DISABLED)
             .empty()
-            .append(makeDefaultOption('No App found'));
+            .append(
+              makeDefaultOption(
+                this._('app-field.empty', {
+                  entity: this._('glossary.app'),
+                }),
+              ),
+            );
         }
 
         return $app
           .empty()
           .append([
-            makeDefaultOption('Select App'),
+            makeDefaultOption(this._('app-field.placeholder')),
             ...appList.map((item) =>
               makeOption(
                 item.name,
@@ -637,17 +649,17 @@
         $auth.prop(...PropertyState.DISABLED);
 
         $account.prop(...PropertyState.DISABLED);
-        syncValue($account, 'account', 'Loading…');
+        syncValue($account, 'account', this._('common.loading'));
 
         $clientId
           .prop(...PropertyState.DISABLED)
           .empty()
-          .append(makeDefaultOption('Select API Client'));
+          .append(makeDefaultOption(this._('api-client-field.placeholder')));
 
         $app
           .prop(...PropertyState.DISABLED)
           .empty()
-          .append(makeDefaultOption('Select App'));
+          .append(makeDefaultOption(this._('app-field.placeholder')));
 
         $topicValue.prop(...PropertyState.DISABLED);
 
@@ -676,7 +688,7 @@
               $clientId
                 .prop(...PropertyState.DISABLED)
                 .empty()
-                .append(makeDefaultOption('Loading…'));
+                .append(makeDefaultOption(this._('common.loading')));
 
               connioApi.fetchApiClients().then((apiClientList) => {
                 makeApiClientSelector(apiClientList);
@@ -688,7 +700,7 @@
                   $app
                     .prop(...PropertyState.DISABLED)
                     .empty()
-                    .append(makeDefaultOption('Loading…'));
+                    .append(makeDefaultOption(this._('common.loading')));
 
                   return connioApi
                     .fetchApiKey(this.clientId)
@@ -761,17 +773,17 @@
 
         $auth.prop(...PropertyState.DISABLED);
 
-        $account.val('Loading…');
+        $account.val(this._('common.loading'));
 
         $clientId
           .prop(...PropertyState.DISABLED)
           .empty()
-          .append(makeDefaultOption('Select API Client'));
+          .append(makeDefaultOption(this._('api-client-field.placeholder')));
 
         $app
           .prop(...PropertyState.DISABLED)
           .empty()
-          .append(makeDefaultOption('Select App'));
+          .append(makeDefaultOption(this._('app-field.placeholder')));
 
         connioApi
           .login()
@@ -788,7 +800,7 @@
             $clientId
               .prop(...PropertyState.DISABLED)
               .empty()
-              .append(makeDefaultOption('Loading…'));
+              .append(makeDefaultOption(this._('common.loading')));
 
             connioApi.fetchApiClients().then((apiClientList) => {
               makeApiClientSelector(apiClientList);
@@ -851,7 +863,7 @@
         $app
           .prop(...PropertyState.DISABLED)
           .empty()
-          .append(makeDefaultOption('Loading…'));
+          .append(makeDefaultOption(this._('common.loading')));
 
         connioApi
           .fetchApiKey(this.clientId)
@@ -875,6 +887,9 @@
        */
       let init = () => {
         console.log('init');
+        console.log(
+          this._('$t(node-red-contrib-connio/connio-mqtt:name-field.label)'),
+        );
 
         Object.assign(this, {
           backup: {
@@ -936,53 +951,36 @@
 
 <script type="text/x-red" data-template-name="connio-mqtt">
   <div class="form-row">
-    <label for="node-input-auth">
-      <!-- <i class="icon-tag"></i> -->
-      Credentials
-    </label>
+    <label for="node-input-auth" data-i18n="credentials-field.label"></label>
 
-    <input type="text" id="node-input-auth" placeholder="Credentials">
+    <input type="text" id="node-input-auth" data-i18n="[placeholder]credentials-field.placeholder">
   </div>
 
   <div id="logged-in-section">
     <div class="form-row">
-      <label for="node-input-account">
-        <!-- <i class="icon-tag"></i> -->
-        Account
-      </label>
-      <!-- <br> -->
+      <label for="node-input-account" data-i18n="account-field.label"></label>
 
       <input type="text" id="node-input-account" readonly>
     </div>
 
     <div class="form-row">
-      <label for="node-input-clientId">
-        <!-- <i class="icon-tag"></i> -->
-        API Client
-      </label>
-      <!-- <br> -->
+      <label for="node-input-clientId" data-i18n="api-client-field.label"></label>
 
       <select id="node-input-clientId">
-        <option value="" selected disabled>Select API Client</option>
+        <option value="" selected disabled data-i18n="api-client-field.placeholder"></option>
       </select>
     </div>
 
     <div class="form-row">
-      <label for="node-input-app">
-        <!-- <i class="icon-tag"></i> -->
-        App
-      </label>
-      <!-- <br> -->
+      <label for="node-input-app" data-i18n="app-field.label"></label>
 
       <select id="node-input-app" disabled>
-        <option value="" selected disabled>Select App</option>
+        <option value="" selected disabled data-i18n="app-field.placeholder"></option>
       </select>
     </div>
 
     <div class="form-row">
-      <label for="topicValue">
-        <!-- <i class="icon-tag"></i> -->
-        Topic
+      <label for="topicValue" data-i18n="topic-field.label">
       </label>
       <br>
 
@@ -1020,20 +1018,16 @@
     <hr>
 
     <div class="form-row">
-      <label for="node-input-name">
-        <!-- <i class="icon-tag"></i> -->
-        Name
-      </label>
+      <label
+        for="node-input-name"
+        data-i18n="name-field.label"
+      ></label>
 
-      <input type="text" id="node-input-name" placeholder="Name">
+      <input type="text" id="node-input-name" data-i18n="[placeholder]name-field.placeholder">
     </div>
   </div>
 
   <input type="hidden" id="node-input-topic">
   <input type="hidden" id="node-input-apiKeyId">
   <input type="hidden" id="node-input-apiKeySecret">
-</script>
-
-<script type="text/x-red" data-help-name="connio-mqtt">
-  <p>Connio MQTT node</p>
 </script>
