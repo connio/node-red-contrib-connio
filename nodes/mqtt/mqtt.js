@@ -14,6 +14,18 @@ const CONNIO_PASSWORD_TOKEN = 'connio-password';
 const CONNIO_KEY_ID_TOKEN = 'connio-key-id';
 const CONNIO_KEY_SECRET_TOKEN = 'connio-key-secret';
 
+class Topic {
+  static build({ account, app, value }) {
+    const prefix = this._buildPrefix(account, app);
+
+    return `${prefix}${value || '#'}`;
+  }
+
+  static _buildPrefix(account, app) {
+    return [account, 'apps', app, 'devices', ''].join('/').toLowerCase();
+  }
+}
+
 function getCredentials(headers) {
   return {
     username: headers[CONNIO_KEY_ID_TOKEN],
@@ -39,6 +51,7 @@ module.exports = function(RED) {
       topic: config.topic,
       account: config.account,
       app: config.app,
+      topicValue: config.topicValue,
       mqttUrl,
     });
 
@@ -70,7 +83,13 @@ module.exports = function(RED) {
           text: 'node-red:common.status.connected',
         });
 
-        this.client.subscribe(this.topic);
+        let topic = Topic.build({
+          account: this.account,
+          app: this.app,
+          value: this.topicValue,
+        });
+
+        this.client.subscribe(topic);
       });
 
       this.client.on('reconnect', () => {

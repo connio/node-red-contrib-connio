@@ -16,9 +16,8 @@
 
     APP: makeId('node-input-app'),
 
-    TOPIC: makeId('node-input-topic'),
     TOPIC_PREFIX: makeId('topicPrefix'),
-    TOPIC_VALUE: makeId('topicValue'),
+    TOPIC_VALUE: makeId('node-input-topicValue'),
   };
 
   const PropertyState = {
@@ -193,7 +192,11 @@
 <!-- Topic -->
 <script type="text/javascript">
   class Topic {
-    static _getValue(node) {
+    static ACCOUNT_PLACEHOLDER = '{account}';
+    static APP_PLACEHOLDER = '{app}';
+    static DEFAULT_VALUE = '#';
+
+    static _getNodeValue(node) {
       return node.val();
     }
 
@@ -204,7 +207,7 @@
         appName,
         devices,
         ...topicValue
-      ] = this._getValue(topicNode).split('/');
+      ] = this._getNodeValue(topicNode).split('/');
 
       return [
         `${accountName}/${app}/${appName}/${devices}/`,
@@ -213,16 +216,26 @@
     }
 
     static build(prefixNode, valueNode) {
-      const prefix = this._getValue(prefixNode);
-      const value = this._getValue(valueNode);
+      const prefix = this._getNodeValue(prefixNode);
+      const value = this._getNodeValue(valueNode);
 
       return `${prefix}${value}`;
     }
 
     static buildPrefix(account, app) {
-      return [account || '{account}', 'apps', app || '{app}', 'devices', '']
+      return [
+        account || this.ACCOUNT_PLACEHOLDER,
+        'apps',
+        app || this.APP_PLACEHOLDER,
+        'devices',
+        '',
+      ]
         .join('/')
         .toLowerCase();
+    }
+
+    static buildValue(value) {
+      return value || this.DEFAULT_VALUE;
     }
   }
 
@@ -385,8 +398,8 @@
       app: {
         required: true,
       },
-      topic: {
-        value: `${Topic.buildPrefix()}#`,
+      topicValue: {
+        value: '#',
         required: true,
       },
     },
@@ -412,7 +425,6 @@
 
       let $topicPrefix = $(ElementId.TOPIC_PREFIX);
       let $topicValue = $(ElementId.TOPIC_VALUE);
-      let $topic = $(ElementId.TOPIC);
 
       let makeApiClientSelector = (apiClientList = []) => {
         if (!apiClientList.length) {
@@ -593,7 +605,7 @@
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
         syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix());
-        syncValue($topicValue, 'topicValue', '#');
+        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
       };
 
       /**
@@ -636,19 +648,16 @@
             connioApi.fetchAccount().then((account) => {
               syncValue($account, 'account', account.name);
 
-              if (this.topic) {
-                let [topicPrefix, topicValue] = Topic.parse($topic);
-
-                syncValue($topicPrefix, 'topicPrefix', topicPrefix);
-                syncValue($topicValue, 'topicValue', topicValue);
-              } else {
-                syncValue(
-                  $topicPrefix,
-                  'topicPrefix',
-                  Topic.buildPrefix(account.name),
-                );
-                syncValue($topicValue, 'topicValue', '#');
-              }
+              syncValue(
+                $topicPrefix,
+                'topicPrefix',
+                Topic.buildPrefix(account.name, this.app),
+              );
+              syncValue(
+                $topicValue,
+                'topicValue',
+                Topic.buildValue(this.topicValue),
+              );
 
               $topicValue.prop(...PropertyState.ENABLED);
 
@@ -700,7 +709,6 @@
        * reset "apiKeyId"
        * reset "apiKeySecret"
        * reset "app"
-       * reset "topic"
        * reset "topicPrefix" to account only
        * reset "topicValue" to '#' (all)
        *
@@ -730,7 +738,6 @@
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
 
-        syncValue($topic, 'topic', '');
         syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
         syncValue($topicValue, 'topicValue', '#');
 
@@ -784,7 +791,6 @@
        * reset "apiKeyId"
        * reset "apiKeySecret"
        * reset "app"
-       * reset "topic"
        * reset "topicPrefix" to account only
        * reset "topicValue" to '#' (all)
        *
@@ -812,9 +818,8 @@
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
 
-        syncValue($topic, 'topic', '');
         syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
-        syncValue($topicValue, 'topicValue', '#');
+        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
 
         $auth.prop(...PropertyState.DISABLED);
         $clientId.prop(...PropertyState.DISABLED);
@@ -858,8 +863,7 @@
             app: this.app,
             auth: this.auth,
             clientId: this.clientId,
-            // TODO: better "topic" backup management
-            topic: this.topic,
+            topicValue: this.topicValue,
           },
         });
 
@@ -897,11 +901,13 @@
       RED.events.off('@credentials/update', this.handleCredentialsUpdate);
       RED.events.off('@config/update', this.handleConfigUpdate);
 
-      makeSyncValue(this)(
-        $('#node-input-topic'),
-        'topic',
-        Topic.build($('#topicPrefix'), $('#topicValue')),
-      );
+      if (!this.topicValue) {
+        makeSyncValue(this)(
+          $('#node-input-topicValue'),
+          'topicValue',
+          Topic.buildValue(),
+        );
+      }
     },
   };
 
@@ -939,8 +945,7 @@
     </div>
 
     <div class="form-row">
-      <label for="topicValue" data-i18n="topic-field.label">
-      </label>
+      <label for="node-input-topicValue" data-i18n="topic-field.label"></label>
       <br>
 
       <div style="display: flex">
@@ -961,7 +966,7 @@
 
         <input
           type="text"
-          id="topicValue"
+          id="node-input-topicValue"
           style="
             width: auto;
 
@@ -986,7 +991,6 @@
     </div>
   </div>
 
-  <input type="hidden" id="node-input-topic">
   <input type="hidden" id="node-input-apiKeyId">
   <input type="hidden" id="node-input-apiKeySecret">
 </script>
