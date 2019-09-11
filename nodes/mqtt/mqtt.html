@@ -334,7 +334,7 @@
         });
       }
 
-      this.isUpdated = true;
+      this.isConfigUpdated = true;
     } catch (error) {
       console.log('handleConfigUpdate :: error', error);
     }
@@ -380,7 +380,7 @@
         });
       }
 
-      this.isUpdated = true;
+      this.isCredentialsUpdated = true;
     } catch (error) {
       console.log('handleCredentialsUpdate :: error', error);
     }
@@ -510,7 +510,12 @@
           return;
         }
 
-        if (this.auth === nextAuth && !isFirstAuthChange && !this.isUpdated) {
+        if (
+          this.auth === nextAuth &&
+          !isFirstAuthChange &&
+          !this.isConfigUpdated &&
+          !this.isCredentialsUpdated
+        ) {
           console.log(this.auth === nextAuth);
 
           return;
@@ -556,9 +561,14 @@
           });
         }
 
-        if (isFirstAuthChange || this.isUpdated) {
+        if (
+          isFirstAuthChange ||
+          this.isConfigUpdated ||
+          this.isCredentialsUpdated
+        ) {
           isFirstAuthChange = false;
-          this.isUpdated = false;
+          this.isConfigUpdated = false;
+          this.isCredentialsUpdated = false;
 
           loadingFlow();
         } else {
