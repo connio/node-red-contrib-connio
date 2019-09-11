@@ -212,7 +212,7 @@
       ];
     }
 
-    static unparse(prefixNode, valueNode) {
+    static build(prefixNode, valueNode) {
       const prefix = this._getValue(prefixNode);
       const value = this._getValue(valueNode);
 
@@ -908,7 +908,7 @@
       makeSyncValue(this)(
         $('#node-input-topic'),
         'topic',
-        Topic.unparse($('#topicPrefix'), $('#topicValue')),
+        Topic.build($('#topicPrefix'), $('#topicValue')),
       );
     },
   };
