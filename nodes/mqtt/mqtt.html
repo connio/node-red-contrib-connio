@@ -604,7 +604,7 @@
           .fail(() => {
             $auth.prop(...PropertyState.ENABLED);
 
-            syncValue($account, 'account', 'Error, please try again');
+            syncValue($account, 'account', this._('error.unknown'));
           });
       };
 
@@ -687,7 +687,7 @@
           .fail(() => {
             $auth.prop(...PropertyState.ENABLED);
 
-            syncValue($account, 'account', 'Auth error, try again');
+            syncValue($account, 'account', this._('error.auth'));
           });
       };
 

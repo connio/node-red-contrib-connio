@@ -7,6 +7,10 @@
     "select": "Select",
     "topic": "Topic"
   },
+  "error": {
+    "auth": "Auth error, try again",
+    "unknown": "Error, please try again"
+  },
   "glossary": {
     "account": "Account",
     "api-client": "API Client",
