@@ -35,33 +35,10 @@
     return `#${name}`;
   }
 
-  /**
-   * @todo Implementation
-   * @example
-   * const { foo, bar } = require(window);
-   */
-  function require(...items) {
-    return;
-  }
-
-  /**
-   * @todo Implementation
-   * @example
-   * export({
-   *  foo,
-   *  bar,
-   * })
-   * const { foo, bar } = require(window);
-   */
-  function _export(...items) {
-    return;
-  }
-
   Object.assign(window.connio, {
     ElementId,
     PropertyState,
     EventType,
-    require,
   });
 </script>
 
@@ -113,8 +90,6 @@
     }
 
     _get(url) {
-      console.log('connioApi :: _get');
-
       return this.$.ajax({
         url,
         json: true,
@@ -123,12 +98,8 @@
     }
 
     login() {
-      console.log('connioApi :: login');
-
       return this._get('login')
         .done((response) => {
-          console.log('connioApi :: login :: SUCCESS');
-
           Object.assign(this, {
             accountId: response.user.accountId,
             apiKey: {
@@ -145,33 +116,23 @@
           return response;
         })
         .fail((error) => {
-          console.log('connioApi :: login :: ERROR');
-
           return error;
         });
     }
 
     fetchAccount() {
-      console.log('ConnioAPI :: fetchAccount');
-
       return this._get(`accounts?id=${this.accountId}`);
     }
 
     fetchApiClients() {
-      console.log('ConnioAPI :: fetchApiClients');
-
       return this._get('api-clients');
     }
 
     fetchApiKey(clientId) {
-      console.log('ConnioAPI :: fetchApiKey');
-
       return this._get(`api-key?clientId=${clientId}`);
     }
 
     fetchApp(id) {
-      console.log('ConnioAPI :: fetchApp');
-
       return this._get(`app?id=${id}`);
     }
 
@@ -257,36 +218,6 @@
   const NODE_ID = 'connio-mqtt';
   const DEFAULT_NAME = 'Connio MQTT';
 
-  /** @todo implementation */
-  function selectorBuilder({
-    node,
-    list = [],
-    selectMessage = 'Select',
-    emptyMessage = 'No item found',
-    isSelectedCb,
-  }) {
-    if (!appList.length) {
-      return $app
-        .prop(...PropertyState.DISABLED)
-        .empty()
-        .append(makeDefaultOption(emptyMessage));
-    }
-
-    return $app
-      .empty()
-      .append([
-        makeDefaultOption(selectMessage),
-        ...appList.map((item) =>
-          makeOption(
-            item.name,
-            item.friendlyName || item.name,
-            this.app === item.name,
-          ),
-        ),
-      ])
-      .prop(...PropertyState.ENABLED);
-  }
-
   function makeOption(value, label, selected = false) {
     return $('<option></option>')
       .val(value)
@@ -309,19 +240,15 @@
 
   function handleConfigUpdate(payload) {
     try {
-      console.log('handleConfigUpdate');
-
       let { email, credentials, connioConfig } = RED.nodes.node(this.auth);
 
       if (!connioConfig) {
-        console.log('authChangeHandler :: No config provided');
         return;
       }
 
       let { url, apiUrl } = payload;
 
       if (!url || !apiUrl) {
-        console.log('authChangeHandler :: Invalid config');
         return;
       }
 
@@ -336,25 +263,21 @@
 
       this.isConfigUpdated = true;
     } catch (error) {
-      console.log('handleConfigUpdate :: error', error);
+      console.error(error);
     }
   }
 
   function handleCredentialsUpdate(payload) {
     try {
-      console.log('handleCredentialsUpdate');
-
       let { email, credentials, connioConfig } = payload;
 
       if (!connioConfig) {
-        console.log('authChangeHandler :: No config provided');
         return;
       }
 
       let { url, apiUrl } = RED.nodes.node(connioConfig);
 
       if (!url || !apiUrl) {
-        console.log('authChangeHandler :: Invalid config');
         return;
       }
 
@@ -369,7 +292,7 @@
 
       this.isCredentialsUpdated = true;
     } catch (error) {
-      console.log('handleCredentialsUpdate :: error', error);
+      console.error(error);
     }
   }
 
@@ -485,8 +408,6 @@
       };
 
       let authChangeHandler = () => {
-        console.log('authChangeHandler');
-
         let nextAuth = $auth.val();
 
         if (nextAuth === '_ADD_') {
@@ -502,8 +423,6 @@
           !this.isConfigUpdated &&
           !this.isCredentialsUpdated
         ) {
-          console.log(this.auth === nextAuth);
-
           return;
         }
 
@@ -512,18 +431,14 @@
         let { email, credentials, connioConfig } = RED.nodes.node(nextAuth);
 
         if (!connioConfig) {
-          console.log('authChangeHandler :: No config provided');
           return;
         }
 
         let { url, apiUrl } = RED.nodes.node(connioConfig);
 
         if (!url || !apiUrl) {
-          console.log('authChangeHandler :: Invalid config');
           return;
         }
-
-        console.log('authChangeHandler :: Auth in progress');
 
         connioApi = new ConnioAPI({
           $,
@@ -550,8 +465,6 @@
       };
 
       let clientIdChangeHandler = () => {
-        console.log('clientIdChangeHandler');
-
         let nextClientTd = $clientId.val();
 
         if (!nextClientTd) {
@@ -568,8 +481,6 @@
       };
 
       let appChangeHandler = () => {
-        console.log('appChangeHandler');
-
         let nextApp = $app.val();
 
         if (!nextApp) {
@@ -589,7 +500,6 @@
       };
 
       /**
-       * @stable
        * @description
        * …
        */
@@ -609,7 +519,6 @@
       };
 
       /**
-       * @stable
        * @todo Make sure that fail fall through to the latests handler
        * @description
        * set "$account" to "Disabled" state
@@ -623,8 +532,6 @@
        * …
        */
       let loadingFlow = () => {
-        console.log('loadingFlow');
-
         $auth.prop(...PropertyState.DISABLED);
 
         $account.prop(...PropertyState.DISABLED);
@@ -702,7 +609,6 @@
       };
 
       /**
-       * @stable
        * @description
        * reset "account"
        * reset "clientId"
@@ -786,7 +692,6 @@
       };
 
       /**
-       * @stable
        * @description
        * reset "apiKeyId"
        * reset "apiKeySecret"
@@ -845,16 +750,10 @@
       };
 
       /**
-       * @stable
        * @description
        * …
        */
       let init = () => {
-        console.log('init');
-        console.log(
-          this._('$t(node-red-contrib-connio/connio-mqtt:name-field.label)'),
-        );
-
         Object.assign(this, {
           backup: {
             account: this.account,
@@ -886,8 +785,6 @@
       init();
     },
     oneditcancel() {
-      console.log('oneditcancel');
-
       RED.events.off('@credentials/update', this.handleCredentialsUpdate);
       RED.events.off('@config/update', this.handleConfigUpdate);
 
@@ -896,8 +793,6 @@
       });
     },
     oneditsave() {
-      console.log('oneditsave');
-
       RED.events.off('@credentials/update', this.handleCredentialsUpdate);
       RED.events.off('@config/update', this.handleConfigUpdate);
 
