@@ -37,6 +37,8 @@ module.exports = function(RED) {
       apiKeyId: config.apiKeyId,
       apiKeySecret: config.apiKeySecret,
       topic: config.topic,
+      account: config.account,
+      app: config.app,
       mqttUrl,
     });
 
@@ -47,6 +49,10 @@ module.exports = function(RED) {
       shape: 'ring',
       text: 'node-red:common.status.not-connected',
     });
+
+    if (!this.account || !this.app) {
+      return;
+    }
 
     try {
       this.client = mqtt.connect(this.mqttUrl, {
