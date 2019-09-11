@@ -219,7 +219,7 @@
       return `${prefix}${value}`;
     }
 
-    static makeTopicPrefix(account = '{account}', app = '{app}') {
+    static buildPrefix(account, app) {
       return [account || '{account}', 'apps', app || '{app}', 'devices', '']
         .join('/')
         .toLowerCase();
@@ -386,7 +386,7 @@
         required: true,
       },
       topic: {
-        value: `${Topic.makeTopicPrefix()}#`,
+        value: `${Topic.buildPrefix()}#`,
         required: true,
       },
     },
@@ -572,7 +572,7 @@
         syncValue(
           $topicPrefix,
           'topicPrefix',
-          Topic.makeTopicPrefix(this.account, this.app),
+          Topic.buildPrefix(this.account, this.app),
         );
       };
 
@@ -592,7 +592,7 @@
         syncValue($apiKeyId, 'apiKeyId', '');
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
-        syncValue($topicPrefix, 'topicPrefix', Topic.makeTopicPrefix());
+        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix());
         syncValue($topicValue, 'topicValue', '#');
       };
 
@@ -645,7 +645,7 @@
                 syncValue(
                   $topicPrefix,
                   'topicPrefix',
-                  Topic.makeTopicPrefix(account.name),
+                  Topic.buildPrefix(account.name),
                 );
                 syncValue($topicValue, 'topicValue', '#');
               }
@@ -731,11 +731,7 @@
         syncValue($app, 'app', '');
 
         syncValue($topic, 'topic', '');
-        syncValue(
-          $topicPrefix,
-          'topicPrefix',
-          Topic.makeTopicPrefix(this.account),
-        );
+        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
         syncValue($topicValue, 'topicValue', '#');
 
         $auth.prop(...PropertyState.DISABLED);
@@ -760,7 +756,7 @@
               syncValue(
                 $topicPrefix,
                 'topicPrefix',
-                Topic.makeTopicPrefix(this.account),
+                Topic.buildPrefix(this.account),
               );
             });
 
@@ -817,11 +813,7 @@
         syncValue($app, 'app', '');
 
         syncValue($topic, 'topic', '');
-        syncValue(
-          $topicPrefix,
-          'topicPrefix',
-          Topic.makeTopicPrefix(this.account),
-        );
+        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
         syncValue($topicValue, 'topicValue', '#');
 
         $auth.prop(...PropertyState.DISABLED);
