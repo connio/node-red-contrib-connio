@@ -307,32 +307,19 @@
 
       let { url, apiUrl } = payload;
 
-      if (!url) {
-        console.log('authChangeHandler :: No Auth URL provided');
+      if (!url || !apiUrl) {
+        console.log('authChangeHandler :: Invalid config');
         return;
       }
 
-      if (!apiUrl) {
-        console.log('authChangeHandler :: No Auth URL provided');
-        return;
-      }
-
-      if (credentials && credentials.password) {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          username: email,
-          password: credentials.password,
-        });
-      } else {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          authNodeId: this.auth,
-        });
-      }
+      connioApi = new ConnioAPI({
+        $,
+        url,
+        apiUrl,
+        username: email,
+        password: credentials && credentials.password,
+        authNodeId: this.auth,
+      });
 
       this.isConfigUpdated = true;
     } catch (error) {
@@ -353,32 +340,19 @@
 
       let { url, apiUrl } = RED.nodes.node(connioConfig);
 
-      if (!url) {
-        console.log('authChangeHandler :: No Auth URL provided');
+      if (!url || !apiUrl) {
+        console.log('authChangeHandler :: Invalid config');
         return;
       }
 
-      if (!apiUrl) {
-        console.log('authChangeHandler :: No Auth URL provided');
-        return;
-      }
-
-      if (credentials && credentials.password) {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          username: email,
-          password: credentials.password,
-        });
-      } else {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          authNodeId: this.auth,
-        });
-      }
+      connioApi = new ConnioAPI({
+        $,
+        url,
+        apiUrl,
+        username: email,
+        password: credentials && credentials.password,
+        authNodeId: this.auth,
+      });
 
       this.isCredentialsUpdated = true;
     } catch (error) {
@@ -532,34 +506,21 @@
 
         let { url, apiUrl } = RED.nodes.node(connioConfig);
 
-        if (!url) {
-          console.log('authChangeHandler :: No Auth URL provided');
-          return;
-        }
-
-        if (!apiUrl) {
-          console.log('authChangeHandler :: No Auth URL provided');
+        if (!url || !apiUrl) {
+          console.log('authChangeHandler :: Invalid config');
           return;
         }
 
         console.log('authChangeHandler :: Auth in progress');
 
-        if (credentials && credentials.password) {
-          connioApi = new ConnioAPI({
-            $,
-            url,
-            apiUrl,
-            username: email,
-            password: credentials.password,
-          });
-        } else {
-          connioApi = new ConnioAPI({
-            $,
-            url,
-            apiUrl,
-            authNodeId: this.auth,
-          });
-        }
+        connioApi = new ConnioAPI({
+          $,
+          url,
+          apiUrl,
+          username: email,
+          password: credentials && credentials.password,
+          authNodeId: this.auth,
+        });
 
         if (
           isFirstAuthChange ||
