@@ -317,8 +317,6 @@
         return;
       }
 
-      console.log('authChangeHandler :: Auth in progress');
-
       if (credentials && credentials.password) {
         connioApi = new ConnioAPI({
           $,
@@ -364,8 +362,6 @@
         console.log('authChangeHandler :: No Auth URL provided');
         return;
       }
-
-      console.log('authChangeHandler :: Auth in progress');
 
       if (credentials && credentials.password) {
         connioApi = new ConnioAPI({
