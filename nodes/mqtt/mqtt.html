@@ -16,9 +16,8 @@
 
     APP: makeId('node-input-app'),
 
-    TOPIC: makeId('node-input-topic'),
     TOPIC_PREFIX: makeId('topicPrefix'),
-    TOPIC_VALUE: makeId('topicValue'),
+    TOPIC_VALUE: makeId('node-input-topicValue'),
   };
 
   const PropertyState = {
@@ -36,33 +35,10 @@
     return `#${name}`;
   }
 
-  /**
-   * @todo Implementation
-   * @example
-   * const { foo, bar } = require(window);
-   */
-  function require(...items) {
-    return;
-  }
-
-  /**
-   * @todo Implementation
-   * @example
-   * export({
-   *  foo,
-   *  bar,
-   * })
-   * const { foo, bar } = require(window);
-   */
-  function _export(...items) {
-    return;
-  }
-
   Object.assign(window.connio, {
     ElementId,
     PropertyState,
     EventType,
-    require,
   });
 </script>
 
@@ -114,8 +90,6 @@
     }
 
     _get(url) {
-      console.log('connioApi :: _get');
-
       return this.$.ajax({
         url,
         json: true,
@@ -124,12 +98,8 @@
     }
 
     login() {
-      console.log('connioApi :: login');
-
       return this._get('login')
         .done((response) => {
-          console.log('connioApi :: login :: SUCCESS');
-
           Object.assign(this, {
             accountId: response.user.accountId,
             apiKey: {
@@ -146,33 +116,23 @@
           return response;
         })
         .fail((error) => {
-          console.log('connioApi :: login :: ERROR');
-
           return error;
         });
     }
 
     fetchAccount() {
-      console.log('ConnioAPI :: fetchAccount');
-
       return this._get(`accounts?id=${this.accountId}`);
     }
 
     fetchApiClients() {
-      console.log('ConnioAPI :: fetchApiClients');
-
       return this._get('api-clients');
     }
 
     fetchApiKey(clientId) {
-      console.log('ConnioAPI :: fetchApiKey');
-
       return this._get(`api-key?clientId=${clientId}`);
     }
 
     fetchApp(id) {
-      console.log('ConnioAPI :: fetchApp');
-
       return this._get(`app?id=${id}`);
     }
 
@@ -193,7 +153,11 @@
 <!-- Topic -->
 <script type="text/javascript">
   class Topic {
-    static _getValue(node) {
+    static ACCOUNT_PLACEHOLDER = '{account}';
+    static APP_PLACEHOLDER = '{app}';
+    static DEFAULT_VALUE = '#';
+
+    static _getNodeValue(node) {
       return node.val();
     }
 
@@ -204,7 +168,7 @@
         appName,
         devices,
         ...topicValue
-      ] = this._getValue(topicNode).split('/');
+      ] = this._getNodeValue(topicNode).split('/');
 
       return [
         `${accountName}/${app}/${appName}/${devices}/`,
@@ -212,17 +176,27 @@
       ];
     }
 
-    static unparse(prefixNode, valueNode) {
-      const prefix = this._getValue(prefixNode);
-      const value = this._getValue(valueNode);
+    static build(prefixNode, valueNode) {
+      const prefix = this._getNodeValue(prefixNode);
+      const value = this._getNodeValue(valueNode);
 
       return `${prefix}${value}`;
     }
 
-    static makeTopicPrefix(account = '{account}', app = '{app}') {
-      return [account || '{account}', 'apps', app || '{app}', 'devices', '']
+    static buildPrefix(account, app) {
+      return [
+        account || this.ACCOUNT_PLACEHOLDER,
+        'apps',
+        app || this.APP_PLACEHOLDER,
+        'devices',
+        '',
+      ]
         .join('/')
         .toLowerCase();
+    }
+
+    static buildValue(value) {
+      return value || this.DEFAULT_VALUE;
     }
   }
 
@@ -243,36 +217,6 @@
 
   const NODE_ID = 'connio-mqtt';
   const DEFAULT_NAME = 'Connio MQTT';
-
-  /** @todo implementation */
-  function selectorBuilder({
-    node,
-    list = [],
-    selectMessage = 'Select',
-    emptyMessage = 'No item found',
-    isSelectedCb,
-  }) {
-    if (!appList.length) {
-      return $app
-        .prop(...PropertyState.DISABLED)
-        .empty()
-        .append(makeDefaultOption(emptyMessage));
-    }
-
-    return $app
-      .empty()
-      .append([
-        makeDefaultOption(selectMessage),
-        ...appList.map((item) =>
-          makeOption(
-            item.name,
-            item.friendlyName || item.name,
-            this.app === item.name,
-          ),
-        ),
-      ])
-      .prop(...PropertyState.ENABLED);
-  }
 
   function makeOption(value, label, selected = false) {
     return $('<option></option>')
@@ -296,97 +240,59 @@
 
   function handleConfigUpdate(payload) {
     try {
-      console.log('handleConfigUpdate');
-
       let { email, credentials, connioConfig } = RED.nodes.node(this.auth);
 
       if (!connioConfig) {
-        console.log('authChangeHandler :: No config provided');
         return;
       }
 
       let { url, apiUrl } = payload;
 
-      if (!url) {
-        console.log('authChangeHandler :: No Auth URL provided');
+      if (!url || !apiUrl) {
         return;
       }
 
-      if (!apiUrl) {
-        console.log('authChangeHandler :: No Auth URL provided');
-        return;
-      }
+      connioApi = new ConnioAPI({
+        $,
+        url,
+        apiUrl,
+        username: email,
+        password: credentials && credentials.password,
+        authNodeId: this.auth,
+      });
 
-      console.log('authChangeHandler :: Auth in progress');
-
-      if (credentials && credentials.password) {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          username: email,
-          password: credentials.password,
-        });
-      } else {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          authNodeId: this.auth,
-        });
-      }
-
-      this.isUpdated = true;
+      this.isConfigUpdated = true;
     } catch (error) {
-      console.log('handleConfigUpdate :: error', error);
+      console.error(error);
     }
   }
 
   function handleCredentialsUpdate(payload) {
     try {
-      console.log('handleCredentialsUpdate');
-
       let { email, credentials, connioConfig } = payload;
 
       if (!connioConfig) {
-        console.log('authChangeHandler :: No config provided');
         return;
       }
 
       let { url, apiUrl } = RED.nodes.node(connioConfig);
 
-      if (!url) {
-        console.log('authChangeHandler :: No Auth URL provided');
+      if (!url || !apiUrl) {
         return;
       }
 
-      if (!apiUrl) {
-        console.log('authChangeHandler :: No Auth URL provided');
-        return;
-      }
+      connioApi = new ConnioAPI({
+        $,
+        url,
+        apiUrl,
+        username: email,
+        password: credentials && credentials.password,
+        authNodeId: this.auth,
+      });
 
-      console.log('authChangeHandler :: Auth in progress');
-
-      if (credentials && credentials.password) {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          username: email,
-          password: credentials.password,
-        });
-      } else {
-        connioApi = new ConnioAPI({
-          $,
-          url,
-          apiUrl,
-          authNodeId: this.auth,
-        });
-      }
-
-      this.isUpdated = true;
+      this.isCredentialsUpdated = true;
     } catch (error) {
-      console.log('handleCredentialsUpdate :: error', error);
+      console.error(error);
     }
   }
 
@@ -415,8 +321,8 @@
       app: {
         required: true,
       },
-      topic: {
-        value: `${Topic.makeTopicPrefix()}#`,
+      topicValue: {
+        value: '#',
         required: true,
       },
     },
@@ -442,7 +348,6 @@
 
       let $topicPrefix = $(ElementId.TOPIC_PREFIX);
       let $topicValue = $(ElementId.TOPIC_VALUE);
-      let $topic = $(ElementId.TOPIC);
 
       let makeApiClientSelector = (apiClientList = []) => {
         if (!apiClientList.length) {
@@ -503,8 +408,6 @@
       };
 
       let authChangeHandler = () => {
-        console.log('authChangeHandler');
-
         let nextAuth = $auth.val();
 
         if (nextAuth === '_ADD_') {
@@ -514,9 +417,12 @@
           return;
         }
 
-        if (this.auth === nextAuth && !isFirstAuthChange && !this.isUpdated) {
-          console.log(this.auth === nextAuth);
-
+        if (
+          this.auth === nextAuth &&
+          !isFirstAuthChange &&
+          !this.isConfigUpdated &&
+          !this.isCredentialsUpdated
+        ) {
           return;
         }
 
@@ -525,44 +431,32 @@
         let { email, credentials, connioConfig } = RED.nodes.node(nextAuth);
 
         if (!connioConfig) {
-          console.log('authChangeHandler :: No config provided');
           return;
         }
 
         let { url, apiUrl } = RED.nodes.node(connioConfig);
 
-        if (!url) {
-          console.log('authChangeHandler :: No Auth URL provided');
+        if (!url || !apiUrl) {
           return;
         }
 
-        if (!apiUrl) {
-          console.log('authChangeHandler :: No Auth URL provided');
-          return;
-        }
+        connioApi = new ConnioAPI({
+          $,
+          url,
+          apiUrl,
+          username: email,
+          password: credentials && credentials.password,
+          authNodeId: this.auth,
+        });
 
-        console.log('authChangeHandler :: Auth in progress');
-
-        if (credentials && credentials.password) {
-          connioApi = new ConnioAPI({
-            $,
-            url,
-            apiUrl,
-            username: email,
-            password: credentials.password,
-          });
-        } else {
-          connioApi = new ConnioAPI({
-            $,
-            url,
-            apiUrl,
-            authNodeId: this.auth,
-          });
-        }
-
-        if (isFirstAuthChange || this.isUpdated) {
+        if (
+          isFirstAuthChange ||
+          this.isConfigUpdated ||
+          this.isCredentialsUpdated
+        ) {
           isFirstAuthChange = false;
-          this.isUpdated = false;
+          this.isConfigUpdated = false;
+          this.isCredentialsUpdated = false;
 
           loadingFlow();
         } else {
@@ -571,8 +465,6 @@
       };
 
       let clientIdChangeHandler = () => {
-        console.log('clientIdChangeHandler');
-
         let nextClientTd = $clientId.val();
 
         if (!nextClientTd) {
@@ -589,8 +481,6 @@
       };
 
       let appChangeHandler = () => {
-        console.log('appChangeHandler');
-
         let nextApp = $app.val();
 
         if (!nextApp) {
@@ -605,12 +495,11 @@
         syncValue(
           $topicPrefix,
           'topicPrefix',
-          Topic.makeTopicPrefix(this.account, this.app),
+          Topic.buildPrefix(this.account, this.app),
         );
       };
 
       /**
-       * @stable
        * @description
        * …
        */
@@ -625,12 +514,11 @@
         syncValue($apiKeyId, 'apiKeyId', '');
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
-        syncValue($topicPrefix, 'topicPrefix', Topic.makeTopicPrefix());
-        syncValue($topicValue, 'topicValue', '#');
+        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix());
+        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
       };
 
       /**
-       * @stable
        * @todo Make sure that fail fall through to the latests handler
        * @description
        * set "$account" to "Disabled" state
@@ -644,8 +532,6 @@
        * …
        */
       let loadingFlow = () => {
-        console.log('loadingFlow');
-
         $auth.prop(...PropertyState.DISABLED);
 
         $account.prop(...PropertyState.DISABLED);
@@ -669,19 +555,16 @@
             connioApi.fetchAccount().then((account) => {
               syncValue($account, 'account', account.name);
 
-              if (this.topic) {
-                let [topicPrefix, topicValue] = Topic.parse($topic);
-
-                syncValue($topicPrefix, 'topicPrefix', topicPrefix);
-                syncValue($topicValue, 'topicValue', topicValue);
-              } else {
-                syncValue(
-                  $topicPrefix,
-                  'topicPrefix',
-                  Topic.makeTopicPrefix(account.name),
-                );
-                syncValue($topicValue, 'topicValue', '#');
-              }
+              syncValue(
+                $topicPrefix,
+                'topicPrefix',
+                Topic.buildPrefix(account.name, this.app),
+              );
+              syncValue(
+                $topicValue,
+                'topicValue',
+                Topic.buildValue(this.topicValue),
+              );
 
               $topicValue.prop(...PropertyState.ENABLED);
 
@@ -721,19 +604,17 @@
           .fail(() => {
             $auth.prop(...PropertyState.ENABLED);
 
-            syncValue($account, 'account', 'Error, please try again');
+            syncValue($account, 'account', this._('error.unknown'));
           });
       };
 
       /**
-       * @stable
        * @description
        * reset "account"
        * reset "clientId"
        * reset "apiKeyId"
        * reset "apiKeySecret"
        * reset "app"
-       * reset "topic"
        * reset "topicPrefix" to account only
        * reset "topicValue" to '#' (all)
        *
@@ -763,12 +644,7 @@
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
 
-        syncValue($topic, 'topic', '');
-        syncValue(
-          $topicPrefix,
-          'topicPrefix',
-          Topic.makeTopicPrefix(this.account),
-        );
+        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
         syncValue($topicValue, 'topicValue', '#');
 
         $auth.prop(...PropertyState.DISABLED);
@@ -793,7 +669,7 @@
               syncValue(
                 $topicPrefix,
                 'topicPrefix',
-                Topic.makeTopicPrefix(this.account),
+                Topic.buildPrefix(this.account),
               );
             });
 
@@ -811,17 +687,15 @@
           .fail(() => {
             $auth.prop(...PropertyState.ENABLED);
 
-            syncValue($account, 'account', 'Auth error, try again');
+            syncValue($account, 'account', this._('error.auth'));
           });
       };
 
       /**
-       * @stable
        * @description
        * reset "apiKeyId"
        * reset "apiKeySecret"
        * reset "app"
-       * reset "topic"
        * reset "topicPrefix" to account only
        * reset "topicValue" to '#' (all)
        *
@@ -849,13 +723,8 @@
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
 
-        syncValue($topic, 'topic', '');
-        syncValue(
-          $topicPrefix,
-          'topicPrefix',
-          Topic.makeTopicPrefix(this.account),
-        );
-        syncValue($topicValue, 'topicValue', '#');
+        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
+        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
 
         $auth.prop(...PropertyState.DISABLED);
         $clientId.prop(...PropertyState.DISABLED);
@@ -881,16 +750,10 @@
       };
 
       /**
-       * @stable
        * @description
        * …
        */
       let init = () => {
-        console.log('init');
-        console.log(
-          this._('$t(node-red-contrib-connio/connio-mqtt:name-field.label)'),
-        );
-
         Object.assign(this, {
           backup: {
             account: this.account,
@@ -899,8 +762,7 @@
             app: this.app,
             auth: this.auth,
             clientId: this.clientId,
-            // TODO: better "topic" backup management
-            topic: this.topic,
+            topicValue: this.topicValue,
           },
         });
 
@@ -923,8 +785,6 @@
       init();
     },
     oneditcancel() {
-      console.log('oneditcancel');
-
       RED.events.off('@credentials/update', this.handleCredentialsUpdate);
       RED.events.off('@config/update', this.handleConfigUpdate);
 
@@ -933,16 +793,16 @@
       });
     },
     oneditsave() {
-      console.log('oneditsave');
-
       RED.events.off('@credentials/update', this.handleCredentialsUpdate);
       RED.events.off('@config/update', this.handleConfigUpdate);
 
-      makeSyncValue(this)(
-        $('#node-input-topic'),
-        'topic',
-        Topic.unparse($('#topicPrefix'), $('#topicValue')),
-      );
+      if (!this.topicValue) {
+        makeSyncValue(this)(
+          $('#node-input-topicValue'),
+          'topicValue',
+          Topic.buildValue(),
+        );
+      }
     },
   };
 
@@ -980,8 +840,7 @@
     </div>
 
     <div class="form-row">
-      <label for="topicValue" data-i18n="topic-field.label">
-      </label>
+      <label for="node-input-topicValue" data-i18n="topic-field.label"></label>
       <br>
 
       <div style="display: flex">
@@ -1002,7 +861,7 @@
 
         <input
           type="text"
-          id="topicValue"
+          id="node-input-topicValue"
           style="
             width: auto;
 
@@ -1027,7 +886,6 @@
     </div>
   </div>
 
-  <input type="hidden" id="node-input-topic">
   <input type="hidden" id="node-input-apiKeyId">
   <input type="hidden" id="node-input-apiKeySecret">
 </script>
