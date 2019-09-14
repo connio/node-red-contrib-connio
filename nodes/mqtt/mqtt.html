@@ -234,7 +234,7 @@
   function makeSyncValue(_this) {
     return function(node, valueName, value) {
       node.val(value);
-      _this[valueName] = node.val();
+      _this.state[valueName] = node.val();
     };
   }
 
@@ -371,7 +371,7 @@
               makeOption(
                 item.id,
                 item.friendlyName || item.name,
-                this.clientId === item.id,
+                this.state.clientId === item.id,
               ),
             ),
           ])
@@ -400,7 +400,7 @@
               makeOption(
                 item.name,
                 item.friendlyName || item.name,
-                this.app === item.name,
+                this.state.app === item.name,
               ),
             ),
           ])
@@ -418,7 +418,7 @@
         }
 
         if (
-          this.auth === nextAuth &&
+          this.state.auth === nextAuth &&
           !isFirstAuthChange &&
           !this.isConfigUpdated &&
           !this.isCredentialsUpdated
@@ -446,7 +446,7 @@
           apiUrl,
           username: email,
           password: credentials && credentials.password,
-          authNodeId: this.auth,
+          authNodeId: this.state.auth,
         });
 
         if (
@@ -471,7 +471,7 @@
           return;
         }
 
-        if (nextClientTd === this.clientId) {
+        if (nextClientTd === this.state.clientId) {
           return;
         }
 
@@ -487,7 +487,7 @@
           return;
         }
 
-        if (nextApp === this.app) {
+        if (nextApp === this.state.app) {
           return;
         }
 
@@ -495,7 +495,7 @@
         syncValue(
           $topicPrefix,
           'topicPrefix',
-          Topic.buildPrefix(this.account, this.app),
+          Topic.buildPrefix(this.state.account, this.state.app),
         );
       };
 
@@ -558,12 +558,12 @@
               syncValue(
                 $topicPrefix,
                 'topicPrefix',
-                Topic.buildPrefix(account.name, this.app),
+                Topic.buildPrefix(account.name, this.state.app),
               );
               syncValue(
                 $topicValue,
                 'topicValue',
-                Topic.buildValue(this.topicValue),
+                Topic.buildValue(this.state.topicValue),
               );
 
               $topicValue.prop(...PropertyState.ENABLED);
@@ -576,7 +576,7 @@
               connioApi.fetchApiClients().then((apiClientList) => {
                 makeApiClientSelector(apiClientList);
 
-                if (this.clientId) {
+                if (this.state.clientId) {
                   $auth.prop(...PropertyState.DISABLED);
                   $clientId.prop(...PropertyState.DISABLED);
 
@@ -586,7 +586,7 @@
                     .append(makeDefaultOption(this._('common.loading')));
 
                   return connioApi
-                    .fetchApiKey(this.clientId)
+                    .fetchApiKey(this.state.clientId)
                     .then(({ appList: appIdList }) => {
                       connioApi.fetchApps(appIdList).then((appList) => {
                         $auth.prop(...PropertyState.ENABLED);
@@ -644,7 +644,11 @@
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
 
-        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
+        syncValue(
+          $topicPrefix,
+          'topicPrefix',
+          Topic.buildPrefix(this.state.account),
+        );
         syncValue($topicValue, 'topicValue', '#');
 
         $auth.prop(...PropertyState.DISABLED);
@@ -669,7 +673,7 @@
               syncValue(
                 $topicPrefix,
                 'topicPrefix',
-                Topic.buildPrefix(this.account),
+                Topic.buildPrefix(this.state.account),
               );
             });
 
@@ -723,7 +727,11 @@
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
 
-        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix(this.account));
+        syncValue(
+          $topicPrefix,
+          'topicPrefix',
+          Topic.buildPrefix(this.state.account),
+        );
         syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
 
         $auth.prop(...PropertyState.DISABLED);
@@ -735,7 +743,7 @@
           .append(makeDefaultOption(this._('common.loading')));
 
         connioApi
-          .fetchApiKey(this.clientId)
+          .fetchApiKey(this.state.clientId)
           .then(({ id, secret, appList: appIdList }) => {
             syncValue($apiKeyId, 'apiKeyId', id);
             syncValue($apiKeySecret, 'apiKeySecret', secret);
@@ -754,15 +762,20 @@
        * …
        */
       let init = () => {
+        let state = {
+          account: this.account,
+          apiKeyId: this.apiKeyId,
+          apiKeySecret: this.apiKeySecret,
+          app: this.app,
+          auth: this.auth,
+          clientId: this.clientId,
+          topicValue: this.topicValue,
+        };
+
         Object.assign(this, {
+          state,
           backup: {
-            account: this.account,
-            apiKeyId: this.apiKeyId,
-            apiKeySecret: this.apiKeySecret,
-            app: this.app,
-            auth: this.auth,
-            clientId: this.clientId,
-            topicValue: this.topicValue,
+            ...state,
           },
         });
 
