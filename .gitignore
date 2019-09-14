@@ -1,3 +1,4 @@
+.env
+.node-red
 node_modules
 package-lock.json
-.env

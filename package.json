@@ -15,7 +15,7 @@
     }
   ],
   "scripts": {
-    "start": "concurrently --kill-others-on-fail 'nodemon -e js,html,json --watch nodes --exec node-red' 'npx browser-sync start -c .browsersyncrc.js' "
+    "start": "concurrently --kill-others-on-fail 'nodemon -e js,html,json --watch nodes --exec node-red -u .node-red' 'npx browser-sync start -c .browsersyncrc.js' "
   },
   "node-red": {
     "nodes": {
