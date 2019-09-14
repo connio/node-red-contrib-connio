@@ -1,4 +1,5 @@
 .browsersyncrc.js
 .editorconfig
 .env
+.node-red
 .prettierrc.js
