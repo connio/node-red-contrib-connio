@@ -120,10 +120,6 @@
         });
     }
 
-    fetchAccount() {
-      return this._get(`accounts?id=${this.accountId}`);
-    }
-
     fetchApiClients() {
       return this._get('api-clients');
     }
@@ -551,54 +547,52 @@
 
         connioApi
           .login()
-          .then(() => {
-            connioApi.fetchAccount().then((account) => {
-              syncValue($account, 'account', account.name);
+          .then(({ account }) => {
+            syncValue($account, 'account', account.name);
 
-              syncValue(
-                $topicPrefix,
-                'topicPrefix',
-                Topic.buildPrefix(account.name, this.state.app),
-              );
-              syncValue(
-                $topicValue,
-                'topicValue',
-                Topic.buildValue(this.state.topicValue),
-              );
+            syncValue(
+              $topicPrefix,
+              'topicPrefix',
+              Topic.buildPrefix(account.name, this.state.app),
+            );
+            syncValue(
+              $topicValue,
+              'topicValue',
+              Topic.buildValue(this.state.topicValue),
+            );
 
-              $topicValue.prop(...PropertyState.ENABLED);
+            $topicValue.prop(...PropertyState.ENABLED);
 
-              $clientId
-                .prop(...PropertyState.DISABLED)
-                .empty()
-                .append(makeDefaultOption(this._('common.loading')));
+            $clientId
+              .prop(...PropertyState.DISABLED)
+              .empty()
+              .append(makeDefaultOption(this._('common.loading')));
 
-              connioApi.fetchApiClients().then((apiClientList) => {
-                makeApiClientSelector(apiClientList);
+            connioApi.fetchApiClients().then((apiClientList) => {
+              makeApiClientSelector(apiClientList);
 
-                if (this.state.clientId) {
-                  $auth.prop(...PropertyState.DISABLED);
-                  $clientId.prop(...PropertyState.DISABLED);
+              if (this.state.clientId) {
+                $auth.prop(...PropertyState.DISABLED);
+                $clientId.prop(...PropertyState.DISABLED);
 
-                  $app
-                    .prop(...PropertyState.DISABLED)
-                    .empty()
-                    .append(makeDefaultOption(this._('common.loading')));
+                $app
+                  .prop(...PropertyState.DISABLED)
+                  .empty()
+                  .append(makeDefaultOption(this._('common.loading')));
 
-                  return connioApi
-                    .fetchApiKey(this.state.clientId)
-                    .then(({ appList: appIdList }) => {
-                      connioApi.fetchApps(appIdList).then((appList) => {
-                        $auth.prop(...PropertyState.ENABLED);
-                        $clientId.prop(...PropertyState.ENABLED);
+                return connioApi
+                  .fetchApiKey(this.state.clientId)
+                  .then(({ appList: appIdList }) => {
+                    connioApi.fetchApps(appIdList).then((appList) => {
+                      $auth.prop(...PropertyState.ENABLED);
+                      $clientId.prop(...PropertyState.ENABLED);
 
-                        makeAppSelector(appList);
-                      });
+                      makeAppSelector(appList);
                     });
-                }
+                  });
+              }
 
-                $auth.prop(...PropertyState.ENABLED);
-              });
+              $auth.prop(...PropertyState.ENABLED);
             });
           })
           .fail((error) => {
@@ -636,7 +630,7 @@
        * set "clientId" selector to "Initial (Disabled)" state
        * set "app" selector to "Initial" state
        * ↓
-       * fetchAccount
+       * login
        *   => SUCCESS =>
        *   ↓
        *     => set "account" field
@@ -680,15 +674,13 @@
 
         connioApi
           .login()
-          .then(() => {
-            connioApi.fetchAccount().then((account) => {
-              syncValue($account, 'account', account.name);
-              syncValue(
-                $topicPrefix,
-                'topicPrefix',
-                Topic.buildPrefix(this.state.account),
-              );
-            });
+          .then(({ account }) => {
+            syncValue($account, 'account', account.name);
+            syncValue(
+              $topicPrefix,
+              'topicPrefix',
+              Topic.buildPrefix(this.state.account),
+            );
 
             $clientId
               .prop(...PropertyState.DISABLED)

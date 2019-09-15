@@ -181,30 +181,6 @@ module.exports = function(RED) {
       });
   });
 
-  RED.httpAdmin.get('/accounts', function(req, res) {
-    log('httpAdmin :: /accounts');
-
-    let apiUrl = getApiUrl(req.headers);
-    let { username, password } = getCredentials(req.headers);
-    let { id } = req.query;
-
-    return request
-      .get({
-        url: `${apiUrl}/accounts/${id}`,
-        json: true,
-      })
-      .auth(username, password)
-      .then((response) => {
-        log('httpAdmin :: /accounts :: SUCCESS');
-
-        res.json({
-          name: response.name,
-          friendlyName: response.friendlyName,
-        });
-      })
-      .catch((error) => res.status(500).json(error));
-  });
-
   RED.httpAdmin.get('/api-clients', function(req, res) {
     let apiUrl = getApiUrl(req.headers);
     let { username, password } = getCredentials(req.headers);
