@@ -1,4 +1,4 @@
-const request = require('request-promise-native');
+const axios = require('axios');
 const mqtt = require('mqtt');
 
 const { log, login } = require('../utils');
@@ -181,44 +181,32 @@ module.exports = function(RED) {
       });
   });
 
-  RED.httpAdmin.get('/accounts', function(req, res) {
-    log('httpAdmin :: /accounts');
-
-    let apiUrl = getApiUrl(req.headers);
-    let { username, password } = getCredentials(req.headers);
-    let { id } = req.query;
-
-    return request
-      .get({
-        url: `${apiUrl}/accounts/${id}`,
-        json: true,
-      })
-      .auth(username, password)
-      .then((response) => {
-        log('httpAdmin :: /accounts :: SUCCESS');
-
-        res.json({
-          name: response.name,
-          friendlyName: response.friendlyName,
-        });
-      })
-      .catch((error) => res.status(500).json(error));
-  });
-
   RED.httpAdmin.get('/api-clients', function(req, res) {
     let apiUrl = getApiUrl(req.headers);
     let { username, password } = getCredentials(req.headers);
 
-    return request
-      .get({
-        url: `${apiUrl}/apiclients`,
-        json: true,
+    return axios
+      .get('/apiclients', {
+        baseURL: apiUrl,
+        auth: {
+          username,
+          password,
+        },
       })
-      .auth(username, password)
-      .then(({ results: apiClients }) => {
+      .then(({ data }) => {
+        log('httpAdmin :: /api-clients :: SUCCESS');
+
+        let { results: apiClients } = data;
+
         res.json(apiClients);
       })
-      .catch((error) => res.status(500).json(error));
+      .catch(({ response = {} }) => {
+        log('httpAdmin :: /api-clients :: ERROR');
+
+        let { data: { error } = {}, status } = response;
+
+        res.status(status).json(error);
+      });
   });
 
   RED.httpAdmin.get('/api-key', function(req, res) {
@@ -226,20 +214,32 @@ module.exports = function(RED) {
     let { username, password } = getCredentials(req.headers);
     let { clientId } = req.query;
 
-    return request
-      .get({
-        url: `${apiUrl}/apiclients/${clientId}/apikey`,
-        json: true,
+    return axios
+      .get(`/apiclients/${clientId}/apikey`, {
+        baseURL: apiUrl,
+        auth: {
+          username,
+          password,
+        },
       })
-      .auth(username, password)
-      .then(({ id, secret, context }) => {
+      .then(({ data }) => {
+        log('httpAdmin :: /api-key :: SUCCESS');
+
+        let { id, secret, context } = data;
+
         res.json({
           id,
           secret,
           appList: context.type === 'app' ? context.ids : undefined,
         });
       })
-      .catch((error) => res.status(500).json(error));
+      .catch(({ response = {} }) => {
+        log('httpAdmin :: /api-key :: ERROR');
+
+        let { data: { error } = {}, status } = response;
+
+        res.status(status).json(error);
+      });
   });
 
   RED.httpAdmin.get('/app', function(req, res) {
@@ -247,18 +247,28 @@ module.exports = function(RED) {
     let { username, password } = getCredentials(req.headers);
     let { id } = req.query;
 
-    return request
-      .get({
-        url: `${apiUrl}/apps/${id}`,
-        json: true,
+    return axios
+      .get(`/apps/${id}`, {
+        baseURL: apiUrl,
+        auth: {
+          username,
+          password,
+        },
       })
-      .auth(username, password)
-      .then((response) => {
+      .then(({ data }) => {
+        log('httpAdmin :: /app :: SUCCESS');
+
         res.json({
-          name: response.name,
-          friendlyName: response.friendlyName,
+          name: data.name,
+          friendlyName: data.friendlyName,
         });
       })
-      .catch((error) => res.status(500).json(error));
+      .catch(({ response = {} }) => {
+        log('httpAdmin :: /app :: ERROR');
+
+        let { data: { error } = {}, status } = response;
+
+        res.status(status).json(error);
+      });
   });
 };
