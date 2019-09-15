@@ -11,6 +11,16 @@ function log(...args) {
   }
 }
 
+function _redirectOn308(body, response, resolveWithFullResponse) {
+  if (response.statusCode === 308) {
+    this.url = response.headers.location;
+
+    return request(this);
+  } else {
+    return resolveWithFullResponse ? response : body;
+  }
+}
+
 /**
  * @param {string} username
  * @param {string} password
@@ -27,6 +37,7 @@ function login(email, password, url) {
       'Content-Type': 'application/json',
     },
     json: true,
+    transform: _redirectOn308,
   };
 
   return request({
