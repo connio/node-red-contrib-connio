@@ -601,10 +601,23 @@
               });
             });
           })
-          .fail(() => {
+          .fail((error) => {
             $auth.prop(...PropertyState.ENABLED);
 
             syncValue($account, 'account', this._('error.unknown'));
+
+            RED.notify(
+              `
+                <b>Connio</b>
+                <br>
+
+                <i>${error.responseJSON[0].cause}</i>
+                <br><br>
+
+                ${error.responseJSON[0].message}
+              `,
+              'error',
+            );
           });
       };
 

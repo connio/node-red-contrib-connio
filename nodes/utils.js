@@ -1,5 +1,5 @@
 const path = require('path');
-const request = require('request-promise-native');
+const axios = require('axios');
 
 require('dotenv').config({
   path: path.resolve(__dirname, '..', '.env'),
@@ -12,40 +12,28 @@ function log(...args) {
 }
 
 /**
- * @param {string} username
+ * @param {string} email
  * @param {string} password
- * @param {{ url: string, username: string, password: string }}
- * @returns {Promise<{ user: Object, apiKey: Object }>}
+ * @param {string} url
+ * @returns {Promise<{ user: Object, apiKey: Object, account: Object }>}
  */
-function login(email, password, url) {
+async function login(email, password, url) {
   log('utils :: login');
 
-  const defaultRequestParams = {
-    method: 'POST',
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    json: true,
-  };
-
-  return request({
-    ...defaultRequestParams,
-    body: {
+  try {
+    let response = await axios.post(url, {
       email,
       password,
-    },
-  })
-    .then((response) => {
-      log('utils :: login :: SUCCESS');
-
-      return response;
-    })
-    .catch((error) => {
-      log('utils :: login :: ERROR');
-
-      return error;
     });
+
+    log('utils :: login :: SUCCESS');
+
+    return response.data;
+  } catch (error) {
+    log('utils :: login :: ERROR');
+
+    return Promise.reject(error);
+  }
 }
 
 module.exports = {
