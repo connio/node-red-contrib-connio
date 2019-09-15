@@ -170,14 +170,14 @@ module.exports = function(RED) {
       .then((response) => {
         log('httpAdmin :: /login :: SUCCESS');
 
-        if (response.statusCode === 401) {
-          return Promise.reject(response);
-        }
-
         res.json(response);
       })
-      .catch((error) => {
-        res.status(500).json(error);
+      .catch(({ response = {} }) => {
+        log('httpAdmin :: /login :: ERROR');
+
+        let { data: { error } = {}, status } = response;
+
+        res.status(status).json(error);
       });
   });
 
