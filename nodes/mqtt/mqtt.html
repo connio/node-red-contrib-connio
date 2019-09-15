@@ -662,7 +662,7 @@
           'topicPrefix',
           Topic.buildPrefix(this.state.account),
         );
-        syncValue($topicValue, 'topicValue', '#');
+        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
 
         $auth.prop(...PropertyState.DISABLED);
 
