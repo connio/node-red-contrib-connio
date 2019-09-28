@@ -7,7 +7,7 @@ const NODE_ID = 'connio-mqtt';
 
 const AUTH_NODE_ID_TOKEN = 'auth-node-id';
 
-const CONNIO_AUTH_URL_TOKEN = 'connio-auth-url';
+const CONNIO_BACKEND_URL_TOKEN = 'connio-backend-url';
 const CONNIO_API_URL_TOKEN = 'connio-api-url';
 const CONNIO_USERNAME_TOKEN = 'connio-username';
 const CONNIO_PASSWORD_TOKEN = 'connio-password';
@@ -157,21 +157,19 @@ module.exports = function(RED) {
 
     let requestPayload = [];
 
+    let authUrl = `${req.headers[CONNIO_BACKEND_URL_TOKEN]}/identity/login`;
+
     if (req.headers[AUTH_NODE_ID_TOKEN]) {
       let { email, credentials } = RED.nodes.getNode(
         req.headers[AUTH_NODE_ID_TOKEN],
       );
 
-      requestPayload = [
-        email,
-        credentials.password,
-        req.headers[CONNIO_AUTH_URL_TOKEN],
-      ];
+      requestPayload = [email, credentials.password, authUrl];
     } else {
       requestPayload = [
         req.headers[CONNIO_USERNAME_TOKEN],
         req.headers[CONNIO_PASSWORD_TOKEN],
-        req.headers[CONNIO_AUTH_URL_TOKEN],
+        authUrl,
       ];
     }
 

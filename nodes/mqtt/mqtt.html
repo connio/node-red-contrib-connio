@@ -45,7 +45,14 @@
 <!-- ConnioAPI -->
 <script type="text/javascript">
   class ConnioAPI {
-    constructor({ $, authNodeId, username, password, url: authUrl, apiUrl }) {
+    constructor({
+      $,
+      authNodeId,
+      username,
+      password,
+      url: backendUrl,
+      apiUrl,
+    }) {
       Object.assign(this, {
         authNodeId: undefined,
         credentials: {
@@ -60,10 +67,10 @@
 
       Object.assign(this, {
         $,
-        authUrl,
         apiUrl,
+        backendUrl,
         headers: {
-          'connio-auth-url': authUrl,
+          'connio-backend-url': backendUrl,
           'connio-api-url': apiUrl,
         },
       });
@@ -248,15 +255,15 @@
         return;
       }
 
-      let { url, apiUrl } = payload;
+      let { apiUrl, backendUrl } = payload;
 
-      if (!url || !apiUrl) {
+      if (!backendUrl || !apiUrl) {
         return;
       }
 
       connioApi = new ConnioAPI({
         $,
-        url,
+        url: backendUrl,
         apiUrl,
         username: email,
         password: credentials && credentials.password,
@@ -277,15 +284,15 @@
         return;
       }
 
-      let { url, apiUrl } = RED.nodes.node(connioConfig);
+      let { apiUrl, backendUrl } = RED.nodes.node(connioConfig);
 
-      if (!url || !apiUrl) {
+      if (!backendUrl || !apiUrl) {
         return;
       }
 
       connioApi = new ConnioAPI({
         $,
-        url,
+        url: backendUrl,
         apiUrl,
         username: email,
         password: credentials && credentials.password,
@@ -438,15 +445,15 @@
           return;
         }
 
-        let { url, apiUrl } = RED.nodes.node(connioConfig);
+        let { apiUrl, backendUrl } = RED.nodes.node(connioConfig);
 
-        if (!url || !apiUrl) {
+        if (!backendUrl || !apiUrl) {
           return;
         }
 
         connioApi = new ConnioAPI({
           $,
-          url,
+          url: backendUrl,
           apiUrl,
           username: email,
           password: credentials && credentials.password,

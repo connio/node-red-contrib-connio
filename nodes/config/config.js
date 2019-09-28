@@ -4,11 +4,11 @@ module.exports = function(RED) {
   function ConfigNode(config) {
     RED.nodes.createNode(this, config);
 
-    const { url, apiUrl, mqttUrl, name } = config;
+    const { apiUrl, backendUrl, mqttUrl, name } = config;
 
     Object.assign(this, {
-      url,
       apiUrl,
+      backendUrl,
       mqttUrl,
       name,
     });

@@ -4,18 +4,17 @@
   const ConfigNode = {
     category: 'config',
     defaults: {
-      name: {
-        value: 'Connio Cloud',
-      },
-      /** @todo Rename to "authUrl" */
-      url: {
+      apiUrl: {
         required: true,
       },
-      apiUrl: {
+      backendUrl: {
         required: true,
       },
       mqttUrl: {
         required: true,
+      },
+      name: {
+        value: 'Connio Cloud',
       },
     },
     label() {
@@ -23,13 +22,13 @@
     },
     oneditsave() {
       const nextConfig = {
-        url: $('#node-config-input-url').val(),
+        backendUrl: $('#node-config-input-backendUrl').val(),
         apiUrl: $('#node-config-input-apiUrl').val(),
         mqttUrl: $('#node-config-input-mqttUrl').val(),
       };
 
       if (
-        nextConfig.url !== this.url ||
+        nextConfig.backendUrl !== this.backendUrl ||
         nextConfig.apiUrl !== this.apiUrl ||
         nextConfig.mqttUrl !== this.mqttUrl
       ) {
@@ -43,15 +42,15 @@
 
 <script type="text/x-red" data-template-name="connio-config">
   <div class="form-row">
-    <label for="node-config-input-url">
+    <label for="node-config-input-backendUrl">
       <i class="fa fa-globe"></i>
-      <span data-i18n="auth-url-field.label"></span>
+      <span data-i18n="backend-url-field.label"></span>
     </label>
 
     <input
       type="text"
-      id="node-config-input-url"
-      data-i18n="[placeholder]auth-url-field.placeholder"
+      id="node-config-input-backendUrl"
+      data-i18n="[placeholder]backend-url-field.placeholder"
     >
   </div>
 

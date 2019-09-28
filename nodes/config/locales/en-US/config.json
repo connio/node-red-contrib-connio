@@ -1,14 +1,13 @@
 {
   "common": {
     "api-url": "API $t(node-red-contrib-connio/connio-config:common.url)",
-    "auth-url": "Auth $t(node-red-contrib-connio/connio-config:common.url)",
     "mqtt-url": "MQTT $t(node-red-contrib-connio/connio-config:common.url)",
     "name": "$t(node-red:common.label.name)",
     "url": "URL"
   },
-  "auth-url-field": {
-    "label": "$t(node-red-contrib-connio/connio-config:common.auth-url)",
-    "placeholder": "$t(node-red-contrib-connio/connio-config:common.auth-url)"
+  "backend-url-field": {
+    "label": "$t(node-red-contrib-connio/connio-config:common.url)",
+    "placeholder": "$t(node-red-contrib-connio/connio-config:common.url)"
   },
   "api-url-field": {
     "label": "$t(node-red-contrib-connio/connio-config:common.api-url)",
