@@ -45,17 +45,19 @@
 <!-- ConnioAPI -->
 <script type="text/javascript">
   class ConnioAPI {
-    authNodeId = undefined;
-    credentials = {
-      username: undefined,
-      password: undefined,
-    };
-    apiKey = {
-      id: undefined,
-      secret: undefined,
-    };
-
     constructor({ $, authNodeId, username, password, url: authUrl, apiUrl }) {
+      Object.assign(this, {
+        authNodeId: undefined,
+        credentials: {
+          username: undefined,
+          password: undefined,
+        },
+        apiKey: {
+          id: undefined,
+          secret: undefined,
+        },
+      });
+
       Object.assign(this, {
         $,
         authUrl,
