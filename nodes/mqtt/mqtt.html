@@ -151,15 +151,19 @@
 <!-- Topic -->
 <script type="text/javascript">
   class Topic {
-    static ACCOUNT_PLACEHOLDER = '{account}';
-    static APP_PLACEHOLDER = '{app}';
-    static DEFAULT_VALUE = '#';
+    constructor() {
+      Object.assign(this, {
+        ACCOUNT_PLACEHOLDER: '{account}',
+        APP_PLACEHOLDER: '{app}',
+        DEFAULT_VALUE: '#',
+      });
+    }
 
-    static _getNodeValue(node) {
+    _getNodeValue(node) {
       return node.val();
     }
 
-    static parse(topicNode) {
+    parse(topicNode) {
       const [
         accountName,
         app,
@@ -174,14 +178,14 @@
       ];
     }
 
-    static build(prefixNode, valueNode) {
+    build(prefixNode, valueNode) {
       const prefix = this._getNodeValue(prefixNode);
       const value = this._getNodeValue(valueNode);
 
       return `${prefix}${value}`;
     }
 
-    static buildPrefix(account, app) {
+    buildPrefix(account, app) {
       return [
         account || this.ACCOUNT_PLACEHOLDER,
         'apps',
@@ -193,7 +197,7 @@
         .toLowerCase();
     }
 
-    static buildValue(value) {
+    buildValue(value) {
       return value || this.DEFAULT_VALUE;
     }
   }
@@ -332,7 +336,9 @@
     },
     oneditprepare() {
       let connioApi;
+      let topicInstance = new Topic();
       let syncValue = makeSyncValue(this);
+
       let isFirstAuthChange = true;
 
       let $auth = $(ElementId.AUTH);
@@ -493,7 +499,7 @@
         syncValue(
           $topicPrefix,
           'topicPrefix',
-          Topic.buildPrefix(this.state.account, this.state.app),
+          topicInstance.buildPrefix(this.state.account, this.state.app),
         );
       };
 
@@ -512,8 +518,8 @@
         syncValue($apiKeyId, 'apiKeyId', '');
         syncValue($apiKeySecret, 'apiKeySecret', '');
         syncValue($app, 'app', '');
-        syncValue($topicPrefix, 'topicPrefix', Topic.buildPrefix());
-        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
+        syncValue($topicPrefix, 'topicPrefix', topicInstance.buildPrefix());
+        syncValue($topicValue, 'topicValue', topicInstance.DEFAULT_VALUE);
       };
 
       /**
@@ -555,12 +561,12 @@
             syncValue(
               $topicPrefix,
               'topicPrefix',
-              Topic.buildPrefix(account.name, this.state.app),
+              topicInstance.buildPrefix(account.name, this.state.app),
             );
             syncValue(
               $topicValue,
               'topicValue',
-              Topic.buildValue(this.state.topicValue),
+              topicInstance.buildValue(this.state.topicValue),
             );
 
             $topicValue.prop(...PropertyState.ENABLED);
@@ -656,7 +662,7 @@
         syncValue(
           $topicPrefix,
           'topicPrefix',
-          Topic.buildPrefix(this.state.account),
+          topicInstance.buildPrefix(this.state.account),
         );
         syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
 
@@ -681,7 +687,7 @@
             syncValue(
               $topicPrefix,
               'topicPrefix',
-              Topic.buildPrefix(this.state.account),
+              topicInstance.buildPrefix(this.state.account),
             );
 
             $clientId
@@ -737,7 +743,7 @@
         syncValue(
           $topicPrefix,
           'topicPrefix',
-          Topic.buildPrefix(this.state.account),
+          topicInstance.buildPrefix(this.state.account),
         );
         syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
 
@@ -813,6 +819,8 @@
       });
     },
     oneditsave() {
+      let topicInstance = new Topic();
+
       RED.events.off('@credentials/update', this.handleCredentialsUpdate);
       RED.events.off('@config/update', this.handleConfigUpdate);
 
@@ -820,7 +828,7 @@
         makeSyncValue(this)(
           $('#node-input-topicValue'),
           'topicValue',
-          Topic.buildValue(),
+          topicInstance.buildValue(),
         );
       }
     },
