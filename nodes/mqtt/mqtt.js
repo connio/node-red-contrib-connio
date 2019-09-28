@@ -109,10 +109,19 @@ module.exports = function(RED) {
       });
 
       this.client.on('message', (topic, message) => {
-        this.send({
-          topic,
-          payload: message.toString(),
-        });
+        let msg = message.toString();
+
+        try {
+          this.send({
+            topic,
+            payload: JSON.parse(msg),
+          });
+        } catch (e) {
+          this.send({
+            topic,
+            payload: msg,
+          });
+        }
       });
 
       this.client.on('error', (error) => {
