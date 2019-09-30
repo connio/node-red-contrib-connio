@@ -1,6 +1,40 @@
 <script type="text/javascript">
   const NODE_ID = 'connio-config';
 
+  /** @enum {string} */
+  const NotificationType = {
+    ERROR: 'error',
+  };
+
+  /**
+   * @param {string} errorMessage
+   * @returns {string}
+   */
+  function textErrorTpl(errorMessage) {
+    return `
+      <b>Connio</b>
+      <br><br>
+
+      ${errorMessage}
+    `;
+  }
+
+  /**
+   * @param {{ cause: string, message: string }} error
+   * @returns {string}
+   */
+  function jsonErrorTpl(error) {
+    return `
+      <b>Connio</b>
+      <br>
+
+      <i>${error.cause}</i>
+      <br><br>
+
+      ${error.message}
+    `;
+  }
+
   const ConfigNode = {
     category: 'config',
     defaults: {
@@ -19,6 +53,61 @@
     },
     label() {
       return this.name;
+    },
+    oneditprepare() {
+      let $_submitButton = $('#node-config-dialog-ok');
+      let $submitButton = $_submitButton.clone();
+
+      let $backendUrl = $('#node-config-input-backendUrl');
+      let $apiUrl = $('#node-config-input-apiUrl');
+      let $mqttUrl = $('#node-config-input-mqttUrl');
+
+      $_submitButton.after($submitButton);
+      $_submitButton.hide();
+
+      $submitButton.on('click', () => {
+        if (!$backendUrl.val()) {
+          RED.notify(
+            textErrorTpl(this._('backend-url-field.error.empty')),
+            NotificationType.ERROR,
+          );
+
+          return;
+        }
+
+        let submitText = $submitButton.text();
+
+        $submitButton.text(this._('common.loading'));
+
+        $.ajax({
+          url: '/connio-settings',
+          json: true,
+          headers: {
+            'connio-backend-url': $backendUrl.val(),
+          },
+        })
+          .done((settings) => {
+            $apiUrl.val(settings.api.public.url);
+            $mqttUrl.val(settings.mqtt.tcp);
+
+            $_submitButton.click();
+          })
+          .fail((error) => {
+            $submitButton.text(submitText);
+
+            if (!error.responseJSON) {
+              RED.notify(
+                textErrorTpl(error.statusText),
+                NotificationType.ERROR,
+              );
+            } else {
+              RED.notify(
+                jsonErrorTpl(error.responseJSON[0]),
+                NotificationType.ERROR,
+              );
+            }
+          });
+      });
     },
     oneditsave() {
       const nextConfig = {
@@ -65,29 +154,6 @@
     >
   </div>
 
-  <div class="form-row">
-    <label for="node-config-input-apiUrl">
-      <i class="fa fa-globe"></i>
-      <span data-i18n="api-url-field.label"></span>
-    </label>
-
-    <input
-      type="text"
-      id="node-config-input-apiUrl"
-      data-i18n="[placeholder]api-url-field.placeholder"
-    >
-  </div>
-
-  <div class="form-row">
-    <label for="node-config-input-mqttUrl">
-      <i class="fa fa-globe"></i>
-      <span data-i18n="mqtt-url-field.label"></span>
-    </label>
-
-    <input
-      type="text"
-      id="node-config-input-mqttUrl"
-      data-i18n="[placeholder]mqtt-url-field.placeholder"
-    >
-  </div>
+  <input type="hidden" id="node-config-input-apiUrl">
+  <input type="hidden" id="node-config-input-mqttUrl">
 </script>

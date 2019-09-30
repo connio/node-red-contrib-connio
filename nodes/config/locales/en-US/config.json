@@ -1,21 +1,15 @@
 {
   "common": {
-    "api-url": "API $t(node-red-contrib-connio/connio-config:common.url)",
-    "mqtt-url": "MQTT $t(node-red-contrib-connio/connio-config:common.url)",
+    "loading": "$t(node-red-contrib-connio/connio-mqtt:common.loading)",
     "name": "$t(node-red:common.label.name)",
     "url": "URL"
   },
   "backend-url-field": {
+    "error": {
+      "empty": "Missing URL"
+    },
     "label": "$t(node-red-contrib-connio/connio-config:common.url)",
     "placeholder": "$t(node-red-contrib-connio/connio-config:common.url)"
-  },
-  "api-url-field": {
-    "label": "$t(node-red-contrib-connio/connio-config:common.api-url)",
-    "placeholder": "$t(node-red-contrib-connio/connio-config:common.api-url)"
-  },
-  "mqtt-url-field": {
-    "label": "$t(node-red-contrib-connio/connio-config:common.mqtt-url)",
-    "placeholder": "$t(node-red-contrib-connio/connio-config:common.mqtt-url)"
   },
   "name-field": {
     "label": "$t(node-red-contrib-connio/connio-config:common.name)",
