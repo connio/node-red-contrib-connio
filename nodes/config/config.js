@@ -19,7 +19,7 @@ module.exports = function(RED) {
 
   RED.nodes.registerType(NODE_ID, ConfigNode);
 
-  RED.httpAdmin.get('/connio-settings', function(req, res) {
+  RED.httpAdmin.get('/connio-settings', (req, res) => {
     let baseURL = req.headers['connio-backend-url'];
 
     return axios
@@ -29,13 +29,46 @@ module.exports = function(RED) {
       .then(({ data }) => {
         log('httpAdmin :: /connio-settings :: SUCCESS');
 
+        if (!data.api || !data.mqtt) {
+          return Promise.reject({
+            response: {
+              status: 404,
+              data: {
+                error: [
+                  {
+                    cause: '',
+                    message: RED._('error.invalid-settings-format'),
+                  },
+                ],
+              },
+            },
+          });
+        }
+
         res.json(data);
       })
-      .catch(({ response = {} }) => {
+      .catch((error = {}) => {
         log('httpAdmin :: /connio-settings :: ERROR');
-        let { data: { error } = {}, status } = response;
 
-        res.status(status).json(error);
+        if (error.response) {
+          let { data = {}, status } = error.response;
+
+          res.status(status).json(data.error);
+        } else if (error.request) {
+          let { statusCode, statusMessage } = error.request;
+
+          res.status(statusCode || 500).json([
+            {
+              message: statusCode ? statusMessage : error.message,
+            },
+          ]);
+        } else {
+          res.status(500).json([
+            {
+              message: statusCode ? statusMessage : error.message,
+            },
+          ]);
+        }
       });
   });
 };

@@ -7,15 +7,15 @@
   };
 
   /**
-   * @param {string} errorMessage
+   * @param {string} message
    * @returns {string}
    */
-  function textErrorTpl(errorMessage) {
+  function textErrorTpl(message = '') {
     return `
       <b>Connio</b>
       <br><br>
 
-      ${errorMessage}
+      ${message}
     `;
   }
 
@@ -23,15 +23,15 @@
    * @param {{ cause: string, message: string }} error
    * @returns {string}
    */
-  function jsonErrorTpl(error) {
+  function jsonErrorTpl({ cause = '', message = '' } = {}) {
     return `
       <b>Connio</b>
       <br>
 
-      <i>${error.cause}</i>
+      <i>${cause}</i>
       <br><br>
 
-      ${error.message}
+      ${message}
     `;
   }
 
@@ -148,7 +148,7 @@
     </label>
 
     <input
-      type="text"
+      type="url"
       id="node-config-input-backendUrl"
       data-i18n="[placeholder]backend-url-field.placeholder"
     >

@@ -4,12 +4,15 @@
     "name": "$t(node-red:common.label.name)",
     "url": "URL"
   },
+  "error": {
+    "invalid-settings-format": "Unable to read configuration"
+  },
   "backend-url-field": {
     "error": {
       "empty": "Missing URL"
     },
     "label": "$t(node-red-contrib-connio/connio-config:common.url)",
-    "placeholder": "$t(node-red-contrib-connio/connio-config:common.url)"
+    "placeholder": "https://example.com"
   },
   "name-field": {
     "label": "$t(node-red-contrib-connio/connio-config:common.name)",
