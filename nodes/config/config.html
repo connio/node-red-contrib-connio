@@ -80,7 +80,7 @@
         $submitButton.text(this._('common.loading'));
 
         $.ajax({
-          url: '/connio-settings',
+          url: 'connio-settings',
           json: true,
           headers: {
             'connio-backend-url': $backendUrl.val(),
