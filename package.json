@@ -30,9 +30,9 @@
   },
   "devDependencies": {
     "browser-sync": "2.26.7",
-    "concurrently": "4.1.2",
-    "cross-env": "5.2.1",
+    "concurrently": "5.0.0",
+    "cross-env": "6.0.3",
     "node-red": "0.20.8",
-    "nodemon": "1.19.2"
+    "nodemon": "2.0.1"
   }
 }
