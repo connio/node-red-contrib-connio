@@ -216,15 +216,6 @@
 
 <!-- connio-mqtt node -->
 <script type="text/javascript">
-  const {
-    ConnioAPI,
-    ElementId,
-    EventType,
-    PropertyState,
-    Topic,
-  } = window.connio;
-
-  const NODE_ID = 'connio-mqtt';
   const DEFAULT_NAME = 'Connio MQTT';
 
   function makeOption(value, label, selected = false) {
@@ -236,8 +227,8 @@
 
   function makeDefaultOption(label) {
     return makeOption('', label)
-      .prop(...PropertyState.SELECTED)
-      .prop(...PropertyState.DISABLED);
+      .prop(...window.connio.PropertyState.SELECTED)
+      .prop(...window.connio.PropertyState.DISABLED);
   }
 
   function makeSyncValue(_this) {
@@ -261,7 +252,7 @@
         return;
       }
 
-      connioApi = new ConnioAPI({
+      connioApi = new window.connio.ConnioAPI({
         $,
         url: backendUrl,
         apiUrl,
@@ -290,7 +281,7 @@
         return;
       }
 
-      connioApi = new ConnioAPI({
+      connioApi = new window.connio.ConnioAPI({
         $,
         url: backendUrl,
         apiUrl,
@@ -343,27 +334,27 @@
     },
     oneditprepare() {
       let connioApi;
-      let topicInstance = new Topic();
+      let topicInstance = new window.connio.Topic();
       let syncValue = makeSyncValue(this);
 
       let isFirstAuthChange = true;
 
-      let $auth = $(ElementId.AUTH);
-      let $account = $(ElementId.ACCOUNT);
+      let $auth = $(window.connio.ElementId.AUTH);
+      let $account = $(window.connio.ElementId.ACCOUNT);
 
-      let $clientId = $(ElementId.CLIENT_ID);
-      let $apiKeyId = $(ElementId.API_KEY_ID);
-      let $apiKeySecret = $(ElementId.API_KEY_SECRET);
+      let $clientId = $(window.connio.ElementId.CLIENT_ID);
+      let $apiKeyId = $(window.connio.ElementId.API_KEY_ID);
+      let $apiKeySecret = $(window.connio.ElementId.API_KEY_SECRET);
 
-      let $app = $(ElementId.APP);
+      let $app = $(window.connio.ElementId.APP);
 
-      let $topicPrefix = $(ElementId.TOPIC_PREFIX);
-      let $topicValue = $(ElementId.TOPIC_VALUE);
+      let $topicPrefix = $(window.connio.ElementId.TOPIC_PREFIX);
+      let $topicValue = $(window.connio.ElementId.TOPIC_VALUE);
 
       let makeApiClientSelector = (apiClientList = []) => {
         if (!apiClientList.length) {
           return $clientId
-            .prop(...PropertyState.DISABLED)
+            .prop(...window.connio.PropertyState.DISABLED)
             .empty()
             .append(
               makeDefaultOption(
@@ -386,13 +377,13 @@
               ),
             ),
           ])
-          .prop(...PropertyState.ENABLED);
+          .prop(...window.connio.PropertyState.ENABLED);
       };
 
       let makeAppSelector = (appList = []) => {
         if (!appList.length) {
           return $app
-            .prop(...PropertyState.DISABLED)
+            .prop(...window.connio.PropertyState.DISABLED)
             .empty()
             .append(
               makeDefaultOption(
@@ -415,7 +406,7 @@
               ),
             ),
           ])
-          .prop(...PropertyState.ENABLED);
+          .prop(...window.connio.PropertyState.ENABLED);
       };
 
       let authChangeHandler = () => {
@@ -451,7 +442,7 @@
           return;
         }
 
-        connioApi = new ConnioAPI({
+        connioApi = new window.connio.ConnioAPI({
           $,
           url: backendUrl,
           apiUrl,
@@ -515,10 +506,10 @@
        * …
        */
       let emptyAuthSelectionFlow = () => {
-        $account.prop(...PropertyState.DISABLED);
-        $clientId.prop(...PropertyState.DISABLED);
-        $app.prop(...PropertyState.DISABLED);
-        $topicValue.prop(...PropertyState.DISABLED);
+        $account.prop(...window.connio.PropertyState.DISABLED);
+        $clientId.prop(...window.connio.PropertyState.DISABLED);
+        $app.prop(...window.connio.PropertyState.DISABLED);
+        $topicValue.prop(...window.connio.PropertyState.DISABLED);
 
         syncValue($account, 'account', '');
         syncValue($clientId, 'clientId', '');
@@ -543,22 +534,22 @@
        * …
        */
       let loadingFlow = () => {
-        $auth.prop(...PropertyState.DISABLED);
+        $auth.prop(...window.connio.PropertyState.DISABLED);
 
-        $account.prop(...PropertyState.DISABLED);
+        $account.prop(...window.connio.PropertyState.DISABLED);
         syncValue($account, 'account', this._('common.loading'));
 
         $clientId
-          .prop(...PropertyState.DISABLED)
+          .prop(...window.connio.PropertyState.DISABLED)
           .empty()
           .append(makeDefaultOption(this._('api-client-field.placeholder')));
 
         $app
-          .prop(...PropertyState.DISABLED)
+          .prop(...window.connio.PropertyState.DISABLED)
           .empty()
           .append(makeDefaultOption(this._('app-field.placeholder')));
 
-        $topicValue.prop(...PropertyState.DISABLED);
+        $topicValue.prop(...window.connio.PropertyState.DISABLED);
 
         connioApi
           .login()
@@ -576,10 +567,10 @@
               topicInstance.buildValue(this.state.topicValue),
             );
 
-            $topicValue.prop(...PropertyState.ENABLED);
+            $topicValue.prop(...window.connio.PropertyState.ENABLED);
 
             $clientId
-              .prop(...PropertyState.DISABLED)
+              .prop(...window.connio.PropertyState.DISABLED)
               .empty()
               .append(makeDefaultOption(this._('common.loading')));
 
@@ -587,11 +578,11 @@
               makeApiClientSelector(apiClientList);
 
               if (this.state.clientId) {
-                $auth.prop(...PropertyState.DISABLED);
-                $clientId.prop(...PropertyState.DISABLED);
+                $auth.prop(...window.connio.PropertyState.DISABLED);
+                $clientId.prop(...window.connio.PropertyState.DISABLED);
 
                 $app
-                  .prop(...PropertyState.DISABLED)
+                  .prop(...window.connio.PropertyState.DISABLED)
                   .empty()
                   .append(makeDefaultOption(this._('common.loading')));
 
@@ -599,19 +590,19 @@
                   .fetchApiKey(this.state.clientId)
                   .then(({ appList: appIdList }) => {
                     connioApi.fetchApps(appIdList).then((appList) => {
-                      $auth.prop(...PropertyState.ENABLED);
-                      $clientId.prop(...PropertyState.ENABLED);
+                      $auth.prop(...window.connio.PropertyState.ENABLED);
+                      $clientId.prop(...window.connio.PropertyState.ENABLED);
 
                       makeAppSelector(appList);
                     });
                   });
               }
 
-              $auth.prop(...PropertyState.ENABLED);
+              $auth.prop(...window.connio.PropertyState.ENABLED);
             });
           })
           .fail((error) => {
-            $auth.prop(...PropertyState.ENABLED);
+            $auth.prop(...window.connio.PropertyState.ENABLED);
 
             syncValue($account, 'account', this._('error.unknown'));
 
@@ -671,19 +662,19 @@
           'topicPrefix',
           topicInstance.buildPrefix(this.state.account),
         );
-        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
+        syncValue($topicValue, 'topicValue', window.connio.Topic.DEFAULT_VALUE);
 
-        $auth.prop(...PropertyState.DISABLED);
+        $auth.prop(...window.connio.PropertyState.DISABLED);
 
         $account.val(this._('common.loading'));
 
         $clientId
-          .prop(...PropertyState.DISABLED)
+          .prop(...window.connio.PropertyState.DISABLED)
           .empty()
           .append(makeDefaultOption(this._('api-client-field.placeholder')));
 
         $app
-          .prop(...PropertyState.DISABLED)
+          .prop(...window.connio.PropertyState.DISABLED)
           .empty()
           .append(makeDefaultOption(this._('app-field.placeholder')));
 
@@ -698,18 +689,18 @@
             );
 
             $clientId
-              .prop(...PropertyState.DISABLED)
+              .prop(...window.connio.PropertyState.DISABLED)
               .empty()
               .append(makeDefaultOption(this._('common.loading')));
 
             connioApi.fetchApiClients().then((apiClientList) => {
               makeApiClientSelector(apiClientList);
 
-              $auth.prop(...PropertyState.ENABLED);
+              $auth.prop(...window.connio.PropertyState.ENABLED);
             });
           })
           .fail(() => {
-            $auth.prop(...PropertyState.ENABLED);
+            $auth.prop(...window.connio.PropertyState.ENABLED);
 
             syncValue($account, 'account', this._('error.auth'));
           });
@@ -752,13 +743,13 @@
           'topicPrefix',
           topicInstance.buildPrefix(this.state.account),
         );
-        syncValue($topicValue, 'topicValue', Topic.DEFAULT_VALUE);
+        syncValue($topicValue, 'topicValue', window.connio.Topic.DEFAULT_VALUE);
 
-        $auth.prop(...PropertyState.DISABLED);
-        $clientId.prop(...PropertyState.DISABLED);
+        $auth.prop(...window.connio.PropertyState.DISABLED);
+        $clientId.prop(...window.connio.PropertyState.DISABLED);
 
         $app
-          .prop(...PropertyState.DISABLED)
+          .prop(...window.connio.PropertyState.DISABLED)
           .empty()
           .append(makeDefaultOption(this._('common.loading')));
 
@@ -771,8 +762,8 @@
             return connioApi.fetchApps(appIdList).then((appList) => {
               makeAppSelector(appList);
 
-              $auth.prop(...PropertyState.ENABLED);
-              $clientId.prop(...PropertyState.ENABLED);
+              $auth.prop(...window.connio.PropertyState.ENABLED);
+              $clientId.prop(...window.connio.PropertyState.ENABLED);
             });
           });
       };
@@ -806,13 +797,13 @@
         RED.events.on('@config/update', this.handleConfigUpdate);
 
         /** @event $auth change */
-        $auth.on(EventType.CHANGE, authChangeHandler.bind(this));
+        $auth.on(window.connio.EventType.CHANGE, authChangeHandler.bind(this));
 
         /** @event $clientId change */
-        $clientId.on(EventType.CHANGE, clientIdChangeHandler.bind(this));
+        $clientId.on(window.connio.EventType.CHANGE, clientIdChangeHandler.bind(this));
 
         /** @event $app change */
-        $app.on(EventType.CHANGE, appChangeHandler.bind(this));
+        $app.on(window.connio.EventType.CHANGE, appChangeHandler.bind(this));
       };
 
       init();
@@ -826,7 +817,7 @@
       });
     },
     oneditsave() {
-      let topicInstance = new Topic();
+      let topicInstance = new window.connio.Topic();
 
       RED.events.off('@credentials/update', this.handleCredentialsUpdate);
       RED.events.off('@config/update', this.handleConfigUpdate);
@@ -841,7 +832,7 @@
     },
   };
 
-  RED.nodes.registerType(NODE_ID, MqttNode);
+  RED.nodes.registerType('connio-mqtt', MqttNode);
 </script>
 
 <script type="text/x-red" data-template-name="connio-mqtt">
