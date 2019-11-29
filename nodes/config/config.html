@@ -1,6 +1,4 @@
 <script type="text/javascript">
-  const NODE_ID = 'connio-config';
-
   /** @enum {string} */
   const NotificationType = {
     ERROR: 'error',
@@ -126,7 +124,7 @@
     },
   };
 
-  RED.nodes.registerType(NODE_ID, ConfigNode);
+  RED.nodes.registerType('connio-config', ConfigNode);
 </script>
 
 <script type="text/x-red" data-template-name="connio-config">

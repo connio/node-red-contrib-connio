@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-connio",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Node-RED nodes for Connio",
   "repository": "git@github.com:connio/node-red-contrib-connio.git",
   "author": "Connio Inc.",
@@ -30,9 +30,9 @@
   },
   "devDependencies": {
     "browser-sync": "2.26.7",
-    "concurrently": "4.1.2",
-    "cross-env": "5.2.1",
-    "node-red": "0.20.8",
-    "nodemon": "1.19.2"
+    "concurrently": "5.0.0",
+    "cross-env": "6.0.3",
+    "node-red": "1.0.3",
+    "nodemon": "2.0.1"
   }
 }
