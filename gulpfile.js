@@ -105,7 +105,7 @@ function runNodemonAndBrowserSync(cb) {
         reloadDelay: 5000,
       });
     })
-    .on('quit', process.exit)
+    .on('quit', () => process.exit(0))
 
   cb();
 }
