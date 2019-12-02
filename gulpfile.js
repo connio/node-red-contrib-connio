@@ -88,8 +88,6 @@ function runNodemonAndBrowserSync(cb) {
       }
 
       browserSyncInstance.reload();
-
-      console.log('SHOULD REFRESH')
     })
     .once('start', () => {
       browserSyncInstance = browserSync.create();
