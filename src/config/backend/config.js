@@ -1,7 +1,14 @@
-let axios = require('axios');
-let { log } = require('../utils');
+const axios = require('axios');
 
-module.exports = function(RED) {
+/** @enum {string} */
+const RequestHeader = {
+  BackendURL: 'connio-backend-url',
+};
+
+/**
+ * @param {Object} RED
+ */
+function createNode(RED) {
   const NODE_ID = 'connio-config';
 
   function ConfigNode(config) {
@@ -18,16 +25,21 @@ module.exports = function(RED) {
   }
 
   RED.nodes.registerType(NODE_ID, ConfigNode);
+};
 
-  RED.httpAdmin.get('/connio-settings', (req, res) => {
-    let baseURL = req.headers['connio-backend-url'];
+/**
+ * @param {Object} RED
+ */
+function createRoutes(RED) {
+  function connioSettings(req, res) {
+    let baseURL = req.headers[RequestHeader.BackendURL];
 
     return axios
       .get('/settings', {
         baseURL,
       })
       .then(({ data }) => {
-        log('httpAdmin :: /connio-settings :: SUCCESS');
+        RED.log.info('httpAdmin :: /connio-settings :: SUCCESS');
 
         if (!data.api || !data.mqtt) {
           return Promise.reject({
@@ -48,7 +60,7 @@ module.exports = function(RED) {
         res.json(data);
       })
       .catch((error = {}) => {
-        log('httpAdmin :: /connio-settings :: ERROR');
+        RED.log.info('httpAdmin :: /connio-settings :: ERROR');
 
         if (error.response) {
           let { data = {}, status } = error.response;
@@ -70,5 +82,12 @@ module.exports = function(RED) {
           ]);
         }
       });
-  });
+  }
+
+  RED.httpAdmin.get('/connio-settings', connioSettings);
+};
+
+module.exports = function(RED) {
+  createNode(RED);
+  createRoutes(RED);
 };
