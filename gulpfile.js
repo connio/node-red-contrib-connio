@@ -39,9 +39,11 @@ function copyBackendNode() {
 
   return gulp.src(srcGlobs)
     .pipe(gulp.dest((file) => {
-      let [filename] = file.basename.split('.');
+      let nodeName = file.path
+        .split(config.src)[1]
+        .split(path.sep)[1];
 
-      file.path = path.join(file.base, filename, file.basename);
+      file.path = path.join(file.base, nodeName, file.basename);
 
       return config.dist;
     }));
