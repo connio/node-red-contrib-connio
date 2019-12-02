@@ -1,4 +1,7 @@
-module.exports = function(RED) {
+/**
+ * @param {Object} RED
+ */
+function createNode(RED) {
   const NODE_ID = 'connio-credentials';
 
   const NODE_CONFIG = {
@@ -20,4 +23,8 @@ module.exports = function(RED) {
   }
 
   RED.nodes.registerType(NODE_ID, CredentialsNode, NODE_CONFIG);
+};
+
+module.exports = function(RED) {
+  createNode(RED);
 };
