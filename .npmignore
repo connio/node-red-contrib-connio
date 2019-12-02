@@ -1,5 +1,9 @@
 .browsersyncrc.js
 .editorconfig
 .env
+.gitignore
 .node-red
 .prettierrc.js
+gulp-node-red-nodes
+gulpfile.js
+src

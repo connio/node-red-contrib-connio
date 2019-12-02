@@ -1,0 +1,78 @@
+<div class="form-row">
+  <label for="node-input-auth" data-i18n="credentials-field.label"></label>
+
+  <input type="text" id="node-input-auth" data-i18n="[placeholder]credentials-field.placeholder">
+</div>
+
+<div id="logged-in-section">
+  <div class="form-row">
+    <label for="node-input-account" data-i18n="account-field.label"></label>
+
+    <input type="text" id="node-input-account" readonly>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-clientId" data-i18n="api-client-field.label"></label>
+
+    <select id="node-input-clientId">
+      <option value="" selected disabled data-i18n="api-client-field.placeholder"></option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-app" data-i18n="app-field.label"></label>
+
+    <select id="node-input-app" disabled>
+      <option value="" selected disabled data-i18n="app-field.placeholder"></option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-topicValue" data-i18n="topic-field.label"></label>
+    <br>
+
+    <div style="display: flex">
+      <input
+        type="text"
+        id="topicPrefix"
+        style="
+          width: auto;
+
+          flex-grow: 4;
+
+          border-top-right-radius: 0;
+          border-right: 0;
+          border-bottom-right-radius: 0;
+        "
+        readonly
+      >
+
+      <input
+        type="text"
+        id="node-input-topicValue"
+        style="
+          width: auto;
+
+          flex-grow: 3;
+
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        "
+      >
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="form-row">
+    <label
+      for="node-input-name"
+      data-i18n="name-field.label"
+    ></label>
+
+    <input type="text" id="node-input-name" data-i18n="[placeholder]name-field.placeholder">
+  </div>
+</div>
+
+<input type="hidden" id="node-input-apiKeyId">
+<input type="hidden" id="node-input-apiKeySecret">

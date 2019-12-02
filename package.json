@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-connio",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Node-RED nodes for Connio",
   "repository": "git@github.com:connio/node-red-contrib-connio.git",
   "author": "Connio Inc.",
@@ -15,7 +15,9 @@
     }
   ],
   "scripts": {
-    "start": "cross-env NODE_ENV=development concurrently --raw -n nodemon,browser-sync --kill-others-on-fail 'nodemon -e js,html,json --watch nodes --exec node-red -u .node-red' 'npx browser-sync start -c .browsersyncrc.js'"
+    "prepublish": "npx gulp build",
+    "serve": "node-red -u .node-red",
+    "start": "cross-env NODE_ENV=development npx gulp start"
   },
   "node-red": {
     "nodes": {
@@ -30,9 +32,14 @@
   },
   "devDependencies": {
     "browser-sync": "2.26.7",
-    "concurrently": "5.0.0",
     "cross-env": "6.0.3",
+    "del": "5.1.0",
+    "gulp": "4.0.2",
+    "gulp-htmlmin": "5.0.1",
+    "gulp-if": "3.0.0",
+    "gulp-terser": "1.2.0",
     "node-red": "1.0.3",
-    "nodemon": "2.0.1"
+    "nodemon": "2.0.1",
+    "vinyl": "2.2.0"
   }
 }

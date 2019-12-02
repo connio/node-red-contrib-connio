@@ -1,3 +1,6 @@
 .env
 .node-red
 node_modules
+
+# NodeRED nodes
+nodes
