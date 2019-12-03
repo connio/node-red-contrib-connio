@@ -93,10 +93,7 @@ const ConfigNode = {
           $submitButton.text(submitText);
 
           if (!error.responseJSON) {
-            RED.notify(
-              textErrorTpl(error.statusText),
-              NotificationType.ERROR,
-            );
+            RED.notify(textErrorTpl(error.statusText), NotificationType.ERROR);
           } else {
             RED.notify(
               jsonErrorTpl(error.responseJSON[0]),
