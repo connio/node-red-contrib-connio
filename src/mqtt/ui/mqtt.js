@@ -280,7 +280,7 @@ function handleCredentialsUpdate(payload) {
 }
 
 let MqttNode = {
-  category: 'Connio',
+  category: 'Connio Cloud',
   color: '#a6bbcf',
   defaults: {
     auth: {
