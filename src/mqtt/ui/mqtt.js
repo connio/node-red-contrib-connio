@@ -127,7 +127,7 @@ class ConnioAPI {
   }
 
   fetchApps(appIdList = []) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const requests = Promise.all(appIdList.map((id) => this.fetchApp(id)));
 
       return requests.then(resolve);
@@ -231,6 +231,8 @@ function handleConfigUpdate(payload) {
       return;
     }
 
+    /** @todo Fix ESLint error */
+    // eslint-disable-next-line no-undef
     connioApi = new window.connio.ConnioAPI({
       $,
       url: backendUrl,
@@ -260,6 +262,8 @@ function handleCredentialsUpdate(payload) {
       return;
     }
 
+    /** @todo Fix ESLint error */
+    // eslint-disable-next-line no-undef
     connioApi = new window.connio.ConnioAPI({
       $,
       url: backendUrl,
