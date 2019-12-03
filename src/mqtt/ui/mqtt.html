@@ -10,9 +10,12 @@
 
 <div id="logged-in-section">
   <div class="form-row">
-    <label for="node-input-account" data-i18n="account-field.label"></label>
+    <label
+      for="node-input-account-friendly"
+      data-i18n="account-field.label"
+    ></label>
 
-    <input type="text" id="node-input-account" readonly />
+    <input type="text" id="node-input-account-friendly" readonly />
   </div>
 
   <div class="form-row">
@@ -89,5 +92,6 @@
   </div>
 </div>
 
+<input type="hidden" id="node-input-account" />
 <input type="hidden" id="node-input-apiKeyId" />
 <input type="hidden" id="node-input-apiKeySecret" />

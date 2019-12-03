@@ -4,6 +4,7 @@ const ElementId = {
   AUTH: makeId('node-input-auth'),
 
   ACCOUNT: makeId('node-input-account'),
+  ACCOUNT_FRIENDLY: makeId('node-input-account-friendly'),
 
   CLIENT_ID: makeId('node-input-clientId'),
   API_KEY_ID: makeId('node-input-apiKeyId'),
@@ -280,7 +281,7 @@ function handleCredentialsUpdate(payload) {
 }
 
 let MqttNode = {
-  category: 'Connio',
+  category: 'Connio Cloud',
   color: '#a6bbcf',
   defaults: {
     auth: {
@@ -324,6 +325,7 @@ let MqttNode = {
 
     let $auth = $(window.connio.ElementId.AUTH);
     let $account = $(window.connio.ElementId.ACCOUNT);
+    let $accountFriendly = $(window.connio.ElementId.ACCOUNT_FRIENDLY);
 
     let $clientId = $(window.connio.ElementId.CLIENT_ID);
     let $apiKeyId = $(window.connio.ElementId.API_KEY_ID);
@@ -489,12 +491,13 @@ let MqttNode = {
      * …
      */
     let emptyAuthSelectionFlow = () => {
-      $account.prop(...window.connio.PropertyState.DISABLED);
+      $accountFriendly.prop(...window.connio.PropertyState.DISABLED);
       $clientId.prop(...window.connio.PropertyState.DISABLED);
       $app.prop(...window.connio.PropertyState.DISABLED);
       $topicValue.prop(...window.connio.PropertyState.DISABLED);
 
       syncValue($account, 'account', '');
+      syncValue($accountFriendly, 'accountFriendly', '');
       syncValue($clientId, 'clientId', '');
       syncValue($apiKeyId, 'apiKeyId', '');
       syncValue($apiKeySecret, 'apiKeySecret', '');
@@ -519,8 +522,8 @@ let MqttNode = {
     let loadingFlow = () => {
       $auth.prop(...window.connio.PropertyState.DISABLED);
 
-      $account.prop(...window.connio.PropertyState.DISABLED);
-      syncValue($account, 'account', this._('common.loading'));
+      $accountFriendly.prop(...window.connio.PropertyState.DISABLED);
+      syncValue($accountFriendly, 'account', this._('common.loading'));
 
       $clientId
         .prop(...window.connio.PropertyState.DISABLED)
@@ -538,6 +541,11 @@ let MqttNode = {
         .login()
         .then(({ account }) => {
           syncValue($account, 'account', account.name);
+          syncValue(
+            $accountFriendly,
+            'accountFriendly',
+            account.friendlyName || account.name,
+          );
 
           syncValue(
             $topicPrefix,
@@ -587,7 +595,11 @@ let MqttNode = {
         .fail((error) => {
           $auth.prop(...window.connio.PropertyState.ENABLED);
 
-          syncValue($account, 'account', this._('error.unknown'));
+          syncValue(
+            $accountFriendly,
+            'accountFriendly',
+            this._('error.unknown'),
+          );
 
           RED.notify(
             `
@@ -635,6 +647,7 @@ let MqttNode = {
      */
     let authSelectionFlow = () => {
       syncValue($account, 'account', '');
+      syncValue($accountFriendly, 'accountFriendly', '');
       syncValue($clientId, 'clientId', '');
       syncValue($apiKeyId, 'apiKeyId', '');
       syncValue($apiKeySecret, 'apiKeySecret', '');
@@ -649,7 +662,7 @@ let MqttNode = {
 
       $auth.prop(...window.connio.PropertyState.DISABLED);
 
-      $account.val(this._('common.loading'));
+      $accountFriendly.val(this._('common.loading'));
 
       $clientId
         .prop(...window.connio.PropertyState.DISABLED)
@@ -665,6 +678,12 @@ let MqttNode = {
         .login()
         .then(({ account }) => {
           syncValue($account, 'account', account.name);
+          syncValue(
+            $accountFriendly,
+            'accountFriendly',
+            account.friendlyName || account.name,
+          );
+
           syncValue(
             $topicPrefix,
             'topicPrefix',
@@ -685,7 +704,7 @@ let MqttNode = {
         .fail(() => {
           $auth.prop(...window.connio.PropertyState.ENABLED);
 
-          syncValue($account, 'account', this._('error.auth'));
+          syncValue($accountFriendly, 'accountFriendly', this._('error.auth'));
         });
     };
 
