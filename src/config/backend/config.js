@@ -75,6 +75,8 @@ function createRoutes(RED) {
             },
           ]);
         } else {
+          let { statusCode, statusMessage } = error.request;
+
           res.status(500).json([
             {
               message: statusCode ? statusMessage : error.message,
