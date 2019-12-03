@@ -1,6 +1,7 @@
 .browsersyncrc.js
 .editorconfig
 .env
+.eslintrc.js
 .gitignore
 .node-red
 .prettierrc.js
