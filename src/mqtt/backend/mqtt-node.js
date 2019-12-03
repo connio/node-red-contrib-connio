@@ -7,7 +7,7 @@ const NODE_ID = 'connio-mqtt';
 /** @type {string} */
 const NodeEvent = {
   Close: 'close',
-}
+};
 
 /** @enum {string} */
 const MQTTEvent = {
@@ -146,4 +146,4 @@ module.exports = function createNode(RED) {
   }
 
   RED.nodes.registerType(NODE_ID, MqttNode);
-}
+};

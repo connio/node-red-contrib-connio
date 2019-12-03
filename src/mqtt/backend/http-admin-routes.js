@@ -35,8 +35,8 @@ function getApiUrl(headers) {
  */
 function defineCtx(req, res, next) {
   Object.assign(req, {
-    ctx: {}
-  })
+    ctx: {},
+  });
 
   next();
 }
@@ -46,13 +46,13 @@ function defineCtx(req, res, next) {
  * @returns {(Object, Object, Function) => void}
  */
 function defineRED(RED) {
-  return function (req, res, next) {
+  return function(req, res, next) {
     Object.assign(req.ctx, {
       RED,
     });
 
     next();
-  }
+  };
 }
 
 /**
@@ -123,7 +123,9 @@ function apiClients(req, res) {
   return axios
     .get('/apiclients', req.ctx.connio)
     .then(({ data }) => {
-      req.ctx.RED.log.debug('@connio/mqtt : httpAdmin : /api-clients : SUCCESS');
+      req.ctx.RED.log.debug(
+        '@connio/mqtt : httpAdmin : /api-clients : SUCCESS',
+      );
 
       let { results: apiClients } = data;
 
@@ -223,10 +225,7 @@ module.exports = function createRoutes(RED) {
   for (let route of httpAdminRouteList) {
     let { method, path, middleware, controller } = route;
 
-    RED.httpAdmin.use(
-      defineCtx,
-      defineRED(RED),
-    );
+    RED.httpAdmin.use(defineCtx, defineRED(RED));
 
     if (middleware) {
       RED.httpAdmin[method](path, ...middleware, controller);
@@ -234,4 +233,4 @@ module.exports = function createRoutes(RED) {
       RED.httpAdmin[method](path, controller);
     }
   }
-}
+};

@@ -23,7 +23,7 @@ function createNode(RED) {
   }
 
   RED.nodes.registerType(NODE_ID, CredentialsNode, NODE_CONFIG);
-};
+}
 
 module.exports = function(RED) {
   createNode(RED);

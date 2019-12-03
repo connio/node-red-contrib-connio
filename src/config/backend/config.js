@@ -25,7 +25,7 @@ function createNode(RED) {
   }
 
   RED.nodes.registerType(NODE_ID, ConfigNode);
-};
+}
 
 /**
  * @param {Object} RED
@@ -85,7 +85,7 @@ function createRoutes(RED) {
   }
 
   RED.httpAdmin.get('/connio-settings', connioSettings);
-};
+}
 
 module.exports = function(RED) {
   createNode(RED);

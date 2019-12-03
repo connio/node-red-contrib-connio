@@ -7,7 +7,7 @@ const StatusType = {
   Disconnected: 2,
   Error: 3,
   NotConnected: 4,
-}
+};
 
 /** @enum {string} */
 const StatusColor = {
@@ -43,27 +43,27 @@ class MQTTNodeStatusManager extends NodeStatusManager {
       {
         id: StatusType.Connected,
         message: StatusMessage.Connected,
-        color: StatusColor.Green
+        color: StatusColor.Green,
       },
       {
         id: StatusType.NotConnected,
         message: StatusMessage.NotConnected,
-        color: StatusColor.Grey
+        color: StatusColor.Grey,
       },
       {
         id: StatusType.Connecting,
         message: StatusMessage.Connecting,
-        color: StatusColor.Yellow
+        color: StatusColor.Yellow,
       },
       {
         id: StatusType.Disconnected,
         message: StatusMessage.Disconnected,
-        color: StatusColor.Red
+        color: StatusColor.Red,
       },
       {
         id: StatusType.Error,
         message: StatusMessage.Error,
-        color: StatusColor.Red
+        color: StatusColor.Red,
       },
     );
   }
@@ -79,7 +79,7 @@ class MQTTNodeStatusManager extends NodeStatusManager {
       });
     }
   }
-};
+}
 
 module.exports = {
   MQTTNodeStatusManager,

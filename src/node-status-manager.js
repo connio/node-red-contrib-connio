@@ -6,7 +6,7 @@ class NodeStatusManager {
     Object.assign(this, {
       managedNode: node,
       status: new Map(),
-    })
+    });
   }
 
   /**
@@ -14,7 +14,7 @@ class NodeStatusManager {
    */
   register(...statusList) {
     for (let { id, ...config } of statusList) {
-      this.status.set(id, config)
+      this.status.set(id, config);
     }
   }
 
@@ -30,8 +30,8 @@ class NodeStatusManager {
       text: message,
     });
   }
-};
+}
 
 module.exports = {
-  NodeStatusManager
+  NodeStatusManager,
 };

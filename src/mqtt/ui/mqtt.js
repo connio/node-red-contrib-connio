@@ -37,14 +37,7 @@ Object.assign(window.connio, {
 });
 
 class ConnioAPI {
-  constructor({
-    $,
-    authNodeId,
-    username,
-    password,
-    url: backendUrl,
-    apiUrl,
-  }) {
+  constructor({ $, authNodeId, username, password, url: backendUrl, apiUrl }) {
     Object.assign(this, {
       authNodeId: undefined,
       credentials: {
@@ -786,7 +779,10 @@ let MqttNode = {
       $auth.on(window.connio.EventType.CHANGE, authChangeHandler.bind(this));
 
       /** @event $clientId change */
-      $clientId.on(window.connio.EventType.CHANGE, clientIdChangeHandler.bind(this));
+      $clientId.on(
+        window.connio.EventType.CHANGE,
+        clientIdChangeHandler.bind(this),
+      );
 
       /** @event $app change */
       $app.on(window.connio.EventType.CHANGE, appChangeHandler.bind(this));
