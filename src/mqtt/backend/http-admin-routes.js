@@ -13,7 +13,7 @@ const CONNIO_USERNAME_TOKEN = 'connio-username';
  * @param {Object} headers
  * @returns {{ username: string, password: string }}
  */
-function getCredentials(headers) {
+function getCredentialsFromHeaders(headers) {
   return {
     username: headers[CONNIO_KEY_ID_TOKEN],
     password: headers[CONNIO_KEY_SECRET_TOKEN],
@@ -62,7 +62,19 @@ function defineRED(RED) {
  */
 function connioConfig(req, res, next) {
   let apiUrl = getApiUrl(req.headers);
-  let { username, password } = getCredentials(req.headers);
+  let { username, password } = getCredentialsFromHeaders(req.headers);
+
+  if (!username || !password) {
+    req.ctx.RED.log.debug(
+      '@connio/mqtt : httpAdmin : connioConfigMiddleware : secret credentials',
+    );
+    let nodeId = req.headers[AUTH_NODE_ID_TOKEN];
+
+    ({
+      apiKeyId: username,
+      apiKeySecret: password,
+    } = req.ctx.RED.nodes.getCredentials(nodeId));
+  }
 
   Object.assign(req.ctx, {
     connio: {
