@@ -40,7 +40,10 @@ module.exports = function gulpNodeRed(nodePrefix) {
 
   function flushResult(callback) {
     let nodeNameList = Object.keys(nodeRedFiles[FileType.JS]);
-    let isUnbalanced = !isBalanced(nodeRedFiles[FileType.JS], nodeRedFiles[FileType.HTML]);
+    let isUnbalanced = !isBalanced(
+      nodeRedFiles[FileType.JS],
+      nodeRedFiles[FileType.HTML],
+    );
 
     if (isUnbalanced) {
       callback(new Error(ErrorMessage.UnbalancedInput));
