@@ -448,13 +448,23 @@
 
         syncValue($clientId, 'clientId', '');
         syncValue($app, 'app', '');
-        syncValue($account, 'account', '');
 
         syncValue($topicPrefix, 'topicPrefix', topicInstance.buildPrefix());
         syncValue($topicValue, 'topicValue', topicInstance.buildValue());
 
+        syncValue($account, 'account', '');
         syncValue($apiKeyId, 'apiKeyId', '');
         syncValue($apiKeySecret, 'apiKeySecret', '');
+
+        $clientId
+          .prop(...PropertyState.Disabled)
+          .empty()
+          .append(makeDefaultOption(this._('api-client-field.placeholder')));
+
+        $app
+          .prop(...PropertyState.Disabled)
+          .empty()
+          .append(makeDefaultOption(this._('app-field.placeholder')));
       };
 
       /**
