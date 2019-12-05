@@ -29,11 +29,17 @@
     Change: 'change',
   };
 
+  /** @enum {string} */
+  const NotificationType = {
+    Error: 'error',
+  };
+
   Object.assign(window, {
     connio: {
       ElementId,
       PropertyState,
       EventType,
+      NotificationType,
     },
   });
 })(window);
@@ -85,7 +91,45 @@
             resolve(response);
           })
           .fail((error) => {
-            reject(error);
+            let errorList = error.responseJSON;
+
+            /**
+             * @todo
+             * `503` error returns `responseJSON` with string.
+             * Maybe it's reasonable to check type of `responseJSON` field as well
+             */
+            if (!error.responseJSON) {
+              switch (error.status) {
+                case 401:
+                  errorList = [
+                    {
+                      cause: error.statusText,
+                      message:
+                        error.responseText ||
+                        'The authorization credentials provided for the request are invalid',
+                    },
+                  ];
+                  break;
+                case 404:
+                  errorList = [
+                    {
+                      cause: error.statusText,
+                      message:
+                        error.responseText || 'Please provide a valid URL',
+                    },
+                  ];
+                  break;
+                default:
+                  errorList = [
+                    {
+                      cause: error.statusText,
+                      message: error.responseText || 'Error, please try again',
+                    },
+                  ];
+              }
+            }
+
+            reject(errorList);
           });
       });
     }
@@ -175,9 +219,32 @@
 
 (function(window, $, RED, connio) {
   'use strict';
-  const { EventType, PropertyState, ElementId, Topic, ConnioAPI } = connio;
+  const {
+    EventType,
+    PropertyState,
+    NotificationType,
+    ElementId,
+    Topic,
+    ConnioAPI,
+  } = connio;
 
   const DEFAULT_NAME = 'Connio MQTT';
+
+  /**
+   * @param {{ cause: string, message: string }} error
+   * @returns {string}
+   */
+  function jsonErrorNotificationTemplate({ cause = '', message = '' } = {}) {
+    return `
+      <b>Connio</b>
+      <br>
+
+      <i>${cause}</i>
+      <br><br>
+
+      ${message}
+    `;
+  }
 
   /**
    * @param {string|number} value
@@ -539,7 +606,21 @@
 
             $auth.prop(...PropertyState.Enabled);
           })
+          .catch((errorList) => {
+            $clientId
+              .prop(...PropertyState.Disabled)
+              .empty()
+              .append(makeDefaultOption('Error, please try again'));
+
+            errorList.forEach((error) => {
+              RED.notify(
+                jsonErrorNotificationTemplate(error),
+                NotificationType.Error,
+              );
+            });
+          })
           .finally(() => {
+            $auth.prop(...PropertyState.Enabled);
           });
       };
 
@@ -602,12 +683,18 @@
           .then((apiClientList) => {
             makeApiClientSelector(apiClientList);
           })
-          .catch(() => {
-            /** @todo Error handler */
+          .catch((errorList) => {
             $clientId
               .prop(...PropertyState.Disabled)
               .empty()
               .append(makeDefaultOption('Error, please try again'));
+
+            errorList.forEach((error) => {
+              RED.notify(
+                jsonErrorNotificationTemplate(error),
+                NotificationType.Error,
+              );
+            });
           })
           .finally(() => {
             $auth.prop(...PropertyState.Enabled);
