@@ -540,7 +540,6 @@
             $auth.prop(...PropertyState.Enabled);
           })
           .finally(() => {
-            $topicValue.prop(...PropertyState.Enabled);
           });
       };
 
