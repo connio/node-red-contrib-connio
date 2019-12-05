@@ -30,6 +30,10 @@ class NodeStatusManager {
       text: message,
     });
   }
+
+  reset() {
+    this.managedNode.status({});
+  }
 }
 
 module.exports = {

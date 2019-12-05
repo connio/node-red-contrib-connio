@@ -23,6 +23,9 @@
     "nodes": {
       "connio-config": "nodes/config/config.js",
       "connio-credentials": "nodes/credentials/credentials.js",
+      "connio-edge-device": "nodes/edge-device/edge-device.js",
+      "connio-edge-gateway": "nodes/edge-gateway/edge-gateway.js",
+      "connio-edge-mqtt": "nodes/edge-mqtt/edge-mqtt.js",
       "connio-mqtt": "nodes/mqtt/mqtt.js"
     }
   },

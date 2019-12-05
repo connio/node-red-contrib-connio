@@ -1,0 +1,16 @@
+{
+  "common": {
+    "deployment": "Deployment",
+    "loading": "Loading, please wait…",
+    "mqtt": "MQTT",
+    "name": "$t(node-red:common.label.name)",
+    "script-loading-error": "Error, please try again"
+  },
+  "node-config": {
+    "palette-label": "$t(node-red-contrib-connio/connio-edge-mqtt:common.mqtt)"
+  },
+  "name-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-mqtt:common.name)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-mqtt:common.name)"
+  }
+}
