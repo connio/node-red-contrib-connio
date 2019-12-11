@@ -294,6 +294,14 @@
 
                 if (node) {
                   this.accountNodeId = node.id;
+
+                  if (this.accountNodeId !== '_ADD_') {
+                    this.deselectDevice();
+
+                    this.initConnioAPI();
+
+                    this.fetchDevices();
+                  }
                 }
               }, 300);
             },
