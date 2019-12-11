@@ -549,7 +549,7 @@
     },
     inputs: 1,
     outputs: 1,
-    icon: 'connio.png',
+    icon: 'font-awesome/fa-microchip',
     label() {
       if (this.deviceId && !this.name) {
         return `${this.deviceName} # ${this.propertyName || this.methodName}`;

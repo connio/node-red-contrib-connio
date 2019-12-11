@@ -436,7 +436,7 @@
     },
     inputs: 1,
     outputs: 1,
-    icon: 'connio.png',
+    icon: 'font-awesome/fa-sitemap',
     label() {
       return this.name || DEFAULT_NAME;
     },
