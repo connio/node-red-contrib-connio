@@ -70,10 +70,8 @@ function connioConfig(req, res, next) {
     );
     let nodeId = req.headers[AUTH_NODE_ID_TOKEN];
 
-    ({
-      apiKeyId: username,
-      apiKeySecret: password,
-    } = req.ctx.RED.nodes.getCredentials(nodeId));
+    ({ apiKeyId: username, apiKeySecret: password } =
+      req.ctx.RED.nodes.getCredentials(nodeId) || {});
   }
 
   Object.assign(req.ctx, {

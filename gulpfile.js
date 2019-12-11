@@ -27,8 +27,7 @@ function copyAssets() {
     `!${config.src}/**/backend/**`,
   ];
 
-  return gulp.src(srcGlobs)
-    .pipe(gulp.dest(config.dist));
+  return gulp.src(srcGlobs).pipe(gulp.dest(config.dist));
 }
 
 function copyBackendNode() {
@@ -37,16 +36,15 @@ function copyBackendNode() {
     `!${config.src}/shared/**/*`,
   ];
 
-  return gulp.src(srcGlobs)
-    .pipe(gulp.dest((file) => {
-      let nodeName = file.path
-        .split(config.src)[1]
-        .split(path.sep)[1];
+  return gulp.src(srcGlobs).pipe(
+    gulp.dest((file) => {
+      let nodeName = file.path.split(config.src)[1].split(path.sep)[1];
 
       file.path = path.join(file.base, nodeName, file.basename);
 
       return config.dist;
-    }));
+    }),
+  );
 }
 
 function buildUINode() {
@@ -56,23 +54,26 @@ function buildUINode() {
     `!${config.src}/shared/**/*`,
   ];
 
-  return gulp.src(srcGlobs)
-    .pipe(gulpIf(
-      (file) => file.extname === '.js',
-      gulpTerser({
-        compress: {
-          drop_debugger: false,
-        },
-      }),
-    ))
+  return gulp
+    .src(srcGlobs)
+    .pipe(
+      gulpIf(
+        (file) => file.extname === '.js',
+        gulpTerser({
+          compress: {
+            drop_debugger: false,
+          },
+        }),
+      ),
+    )
     .pipe(gulpNodeRedNodes(config.nodeNamePrefix))
-    .pipe(gulpHtmlmin({
-      processScripts: [
-        'text/x-red',
-      ],
-      collapseWhitespace: true,
-      minifyCSS: true,
-    }))
+    .pipe(
+      gulpHtmlmin({
+        processScripts: ['text/x-red'],
+        collapseWhitespace: true,
+        minifyCSS: true,
+      }),
+    )
     .pipe(gulp.dest(config.dist));
 }
 
@@ -98,14 +99,14 @@ function runNodemonAndBrowserSync(cb) {
         ui: false,
         proxy: {
           target: config.nodeRedUrl,
-          ws: true
+          ws: true,
         },
         ghostMode: false,
         open: false,
         reloadDelay: 5000,
       });
     })
-    .on('quit', () => process.exit(0))
+    .on('quit', () => process.exit(0));
 
   cb();
 }
@@ -118,7 +119,7 @@ function restartNodemon(cb) {
   nodemonInstance.restart();
 
   cb();
-};
+}
 
 const buildNodeRedNodes = gulp.parallel(
   copyAssets,
@@ -127,22 +128,19 @@ const buildNodeRedNodes = gulp.parallel(
 );
 
 module.exports = {
-  build: gulp.series(
-    cleanDist,
-    buildNodeRedNodes,
-  ),
+  build: gulp.series(cleanDist, buildNodeRedNodes),
 
   start: gulp.series(
     cleanDist,
     buildNodeRedNodes,
     runNodemonAndBrowserSync,
     function watcher(cb) {
-      gulp.watch(`${config.src}/**/*`, gulp.series(
-        buildNodeRedNodes,
-        restartNodemon,
-      ))
+      gulp.watch(
+        `${config.src}/**/*`,
+        gulp.series(buildNodeRedNodes, restartNodemon),
+      );
 
       cb();
-    }
+    },
   ),
 };
