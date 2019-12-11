@@ -148,7 +148,7 @@
 
         <label
           for="method"
-          style="display: flex; align-items: baseline; padding: 0.25rem 0;"
+          style="display: flex; align-items: baseline; margin-right: 1rem; padding: 0.25rem 0;"
         >
           <input
             type="radio"
@@ -160,6 +160,22 @@
           />
 
           <span data-i18n="type-field.method-label"></span>
+        </label>
+
+        <label
+          for="json"
+          style="display: flex; align-items: baseline; padding: 0.25rem 0;"
+        >
+          <input
+            type="radio"
+            style="margin: 0 0.5rem 0 0;"
+            name="outputType"
+            id="json"
+            v-bind:value="OutputType.JSON"
+            v-model="outputType"
+          />
+
+          <span data-i18n="type-field.json-label"></span>
         </label>
       </div>
 

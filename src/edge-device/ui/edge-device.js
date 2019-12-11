@@ -131,6 +131,7 @@
     None: -1,
     Property: 0,
     Method: 1,
+    JSON: 2,
   };
 
   /**

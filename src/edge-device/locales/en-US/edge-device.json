@@ -3,6 +3,7 @@
     "account": "Account",
     "device": "Device",
     "error": "Error",
+    "json": "JSON",
     "loading": "Loading, please wait…",
     "method": "Method",
     "name": "$t(node-red:common.label.name)",
@@ -28,6 +29,7 @@
     "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.select) $t(node-red-contrib-connio/connio-edge-device:common.device)"
   },
   "type-field": {
+    "json-label": "$t(node-red-contrib-connio/connio-edge-device:common.json)",
     "label": "$t(node-red-contrib-connio/connio-edge-device:common.type)",
     "method-label": "$t(node-red-contrib-connio/connio-edge-device:common.method)",
     "property-label": "$t(node-red-contrib-connio/connio-edge-device:common.property)"
