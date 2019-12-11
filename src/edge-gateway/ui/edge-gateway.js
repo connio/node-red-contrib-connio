@@ -466,7 +466,7 @@
           <br/>
           Edge Gateway
           <br/><br/>
-          <b>${data.deviceName}</b> is not connected to <b>${data.gatewayName}</b>
+          <b>${data.deviceName}</b> is not linked to <b>${data.gatewayName}</b>
         `,
         'error',
       );
