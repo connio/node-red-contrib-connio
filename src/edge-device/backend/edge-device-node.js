@@ -9,9 +9,11 @@ function makeTopic({ deviceId, propertyName, methodName }) {
 
   if (propertyName) {
     return `${FIRST_PART}/properties/${propertyName}`;
+  } else if (methodName) {
+    return `${FIRST_PART}/methods/${methodName}`;
   }
 
-  return `${FIRST_PART}/methods/${methodName}`;
+  return `${FIRST_PART}/json`;
 }
 
 module.exports = function createNode(RED) {
