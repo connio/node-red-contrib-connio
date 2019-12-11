@@ -17,8 +17,8 @@
     "placeholder": "Select Account"
   },
   "device-field": {
-    "label": "$t(node-red-contrib-connio/connio-edge-gateway:common.device)",
-    "placeholder": "$t(node-red-contrib-connio/connio-edge-gateway:common.select) $t(node-red-contrib-connio/connio-edge-gateway:common.device)"
+    "label": "$t(node-red-contrib-connio/connio-edge-gateway:common.gateway)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-gateway:common.select) $t(node-red-contrib-connio/connio-edge-gateway:common.gateway)"
   },
   "name-field": {
     "label": "$t(node-red-contrib-connio/connio-edge-gateway:common.name)",
