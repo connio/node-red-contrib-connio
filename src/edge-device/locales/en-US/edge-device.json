@@ -1,0 +1,47 @@
+{
+  "common": {
+    "account": "Account",
+    "device": "Device",
+    "error": "Error",
+    "loading": "Loading, please wait…",
+    "method": "Method",
+    "name": "$t(node-red:common.label.name)",
+    "output": "Output",
+    "property": "Property",
+    "script-loading-error": "Error, please try again",
+    "select": "Select",
+    "try-again": "Try again",
+    "type": "Type"
+  },
+  "error": {
+    "header": "$t(node-red-contrib-connio/connio-edge-device:common.error)",
+    "try-again-button": "$t(node-red-contrib-connio/connio-edge-device:common.try-again)"
+  },
+  "account-field": {
+    "placeholder": "Select Account"
+  },
+  "node-config": {
+    "palette-label": "device"
+  },
+  "device-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-device:common.device)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.select) $t(node-red-contrib-connio/connio-edge-device:common.device)"
+  },
+  "type-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-device:common.type)",
+    "method-label": "$t(node-red-contrib-connio/connio-edge-device:common.method)",
+    "property-label": "$t(node-red-contrib-connio/connio-edge-device:common.property)"
+  },
+  "property-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-device:common.property)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.select) $t(node-red-contrib-connio/connio-edge-device:common.property)"
+  },
+  "method-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-device:common.method)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.select) $t(node-red-contrib-connio/connio-edge-device:common.method)"
+  },
+  "name-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-device:common.name)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.name)"
+  }
+}

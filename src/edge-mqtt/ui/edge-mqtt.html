@@ -1,0 +1,57 @@
+<div class="form-row" style="display: none;">
+  <input type="text" id="node-input-deploymentNodeId" />
+  <input type="text" id="node-input-name" />
+</div>
+
+<div id="connio-edge-mqtt-vue-app-loader" data-i18n="common.loading"></div>
+<div
+  id="connio-edge-mqtt-vue-app-error"
+  style="display: none;"
+  data-i18n="common.script-loading-error"
+></div>
+
+<div id="connio-edge-mqtt-vue-app-container" style="display: none;">
+  <div class="form-row">
+    <label for="deploymentNodeId" data-i18n="common.deployment"></label>
+
+    <div
+      style="display: inline-block; position: relative; width: 70%; height: 20px;"
+    >
+      <div style="position: absolute; left: 0px; right: 40px;">
+        <select
+          name="deploymentNodeId"
+          id="deploymentNodeId"
+          style="width: 100%;"
+          v-model="deploymentNodeId"
+        >
+          <option
+            v-for="deployment in deploymentList"
+            v-bind:key="deployment.value"
+            v-bind:value="deployment.value"
+          >
+            {{ deployment.label }}
+          </option>
+        </select>
+      </div>
+
+      <co-iconic-button
+        v-bind:click="openDeploymentConfig"
+        v-bind:icon="'pencil'"
+        style="position: absolute; right: 0px; top: 0px;"
+      ></co-iconic-button>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class="form-row">
+    <label for="name" data-i18n="name-field.label"></label>
+
+    <input
+      type="text"
+      id="name"
+      data-i18n="[placeholder]name-field.placeholder"
+      v-model="name"
+    />
+  </div>
+</div>

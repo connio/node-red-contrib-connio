@@ -8,5 +8,6 @@ module.exports = {
   },
   globals: {
     RED: 'readable',
+    Vue: 'readable',
   },
 };

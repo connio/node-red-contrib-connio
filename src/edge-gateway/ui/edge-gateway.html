@@ -1,0 +1,135 @@
+<div class="form-row" style="display: none;">
+  <input type="text" id="node-input-accountNodeId" />
+
+  <input type="text" id="node-input-deviceId" />
+  <input type="text" id="node-input-deviceName" />
+  <input type="text" id="node-input-deviceApiKeyId" />
+  <input type="text" id="node-input-deviceApiKeySecret" />
+  <input type="text" id="node-input-deviceApiKeyConnectedDevices" />
+
+  <input type="text" id="node-input-name" />
+</div>
+
+<div id="connio-edge-gateway-vue-app-loader" data-i18n="common.loading"></div>
+
+<div
+  id="connio-edge-gateway-vue-app-error"
+  style="display: none;"
+  data-i18n="common.script-loading-error"
+></div>
+
+<div id="connio-edge-gateway-vue-app-container" style="display: none;">
+  <div v-show="isLoading" data-i18n="common.loading"></div>
+
+  <div v-if="errorList">
+    <div v-for="error in errorList">
+      <h3 data-i18n="error.header"></h3>
+
+      <p style="margin-bottom: 0.25rem">
+        <i>{{ error.cause }}</i>
+      </p>
+
+      <p>{{ error.message }}</p>
+
+      <button
+        type="button"
+        v-on:click="resetAppState"
+        data-i18n="error.try-again-button"
+      ></button>
+    </div>
+  </div>
+
+  <div v-show="!isLoading && !errorList">
+    <div class="form-row">
+      <label for="accountNodeId" data-i18n="common.account"></label>
+
+      <div
+        style="display: inline-block; position: relative; width: 70%; height: 20px;"
+      >
+        <div style="position: absolute; left: 0px; right: 40px;">
+          <select
+            name="accountNodeId"
+            id="accountNodeId"
+            style="width: 100%;"
+            v-model="accountNodeId"
+          >
+            <option
+              value=""
+              selected
+              disabled
+              data-i18n="account-field.placeholder"
+            ></option>
+
+            <option
+              v-for="account in accountList"
+              v-bind:key="account.value"
+              v-bind:value="account.value"
+            >
+              {{ account.label }}
+            </option>
+          </select>
+        </div>
+
+        <co-iconic-button
+          v-bind:click="openAccountConfig"
+          v-bind:icon="'pencil'"
+          style="position: absolute; right: 0px; top: 0px;"
+          :disabled="!accountNodeId"
+        ></co-iconic-button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label for="deviceId" data-i18n="device-field.label"></label>
+
+      <div
+        style="display: inline-block; position: relative; width: 70%; height: 20px;"
+      >
+        <div style="position: absolute; left: 0px; right: 40px;">
+          <select
+            name="deviceId"
+            id="deviceId"
+            style="width: 100%;"
+            v-model="deviceId"
+            :disabled="!accountNodeId || accountNodeId === '_ADD_'"
+          >
+            <option
+              value=""
+              data-i18n="device-field.placeholder"
+              selected
+              disabled
+            ></option>
+
+            <option
+              v-for="device in deviceList"
+              v-bind:key="device.id"
+              v-bind:value="device.id"
+            >
+              {{ device | name }}
+            </option>
+          </select>
+        </div>
+
+        <co-iconic-button
+          v-bind:icon="'times'"
+          v-bind:click="deselectDevice"
+          v-bind:disabled="!deviceId"
+          style="position: absolute; right: 0px; top: 0px;"
+        ></co-iconic-button>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="form-row">
+      <label for="name" data-i18n="name-field.label"></label>
+
+      <input
+        type="text"
+        id="name"
+        data-i18n="[placeholder]name-field.placeholder"
+        v-model="name"
+      />
+    </div>
+  </div>
+</div>

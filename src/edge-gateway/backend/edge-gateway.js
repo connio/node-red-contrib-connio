@@ -1,4 +1,4 @@
-const createNode = require('./credentials-node');
+const createNode = require('./edge-gateway-node');
 const createRoutes = require('./http-admin-routes');
 
 module.exports = function(RED) {

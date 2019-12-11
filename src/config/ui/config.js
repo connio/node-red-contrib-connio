@@ -39,6 +39,7 @@ const ConfigNode = {
       required: true,
     },
     backendUrl: {
+      value: 'https://api-auth.connio.cloud',
       required: true,
     },
     mqttUrl: {

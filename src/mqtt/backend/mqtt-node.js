@@ -16,6 +16,7 @@ const MQTTEvent = {
   Reconnect: 'reconnect',
   End: 'end',
   Error: 'error',
+  Message: 'message',
 };
 
 module.exports = function createNode(RED) {
