@@ -534,7 +534,7 @@
     color: '#a6bbcf',
     defaults: {
       name: {
-        value: DEFAULT_NAME,
+        value: '',
       },
       accountNodeId: {
         type: 'connio-credentials',
