@@ -1,0 +1,30 @@
+{
+  "common": {
+    "account": "Account",
+    "device": "Device",
+    "error": "Error",
+    "loading": "Loading, please wait…",
+    "name": "$t(node-red:common.label.name)",
+    "script-loading-error": "Error, please try again",
+    "select": "Select",
+    "try-again": "Try again"
+  },
+  "node-config": {
+    "palette-label": "device in"
+  },
+  "account-field": {
+    "placeholder": "Select Account"
+  },
+  "device-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-device-in:common.device)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-device-in:common.select) $t(node-red-contrib-connio/connio-edge-device-in:common.device)"
+  },
+  "name-field": {
+    "label": "$t(node-red-contrib-connio/connio-edge-device-in:common.name)",
+    "placeholder": "$t(node-red-contrib-connio/connio-edge-device-in:common.name)"
+  },
+  "error": {
+    "header": "$t(node-red-contrib-connio/connio-edge-device-in:common.error)",
+    "try-again-button": "$t(node-red-contrib-connio/connio-edge-device-in:common.try-again)"
+  }
+}

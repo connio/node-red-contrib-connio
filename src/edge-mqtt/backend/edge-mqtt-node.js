@@ -1,7 +1,6 @@
-const mqtt = require('mqtt');
+const mqtt = require('../edge-mqtt');
 
 const NodeEvent = require('../node-event');
-const MQTTEvent = require('../mqtt-event');
 const {
   EdgeMQTTNodeStatusManager,
 } = require('./edge-mqtt-node-status-manager');
@@ -42,9 +41,7 @@ module.exports = function createNode(RED) {
       this.debug(NodeEvent.Close);
 
       if (this.client) {
-        this.client.end(true, () => {
-          this.debug('MQTT connection closed');
-        });
+        this.client.__disconnect(this.id);
       }
     }
 
@@ -111,45 +108,46 @@ module.exports = function createNode(RED) {
       });
     }
 
-    /** @todo Handle errors */
     _connect({ clientId, username, password }) {
       this.debug('_connect');
 
-      this.client = mqtt.connect(this.mqttURL, {
+      this.client = mqtt(this.mqttURL, {
         clientId,
         username,
         password,
-        keepalive: 25,
-        connectTimeout: 60 * 1000,
       });
 
-      this.statusManager.setConnecting();
+      if (this.client.connected) {
+        this.statusManager.setConnected();
+      } else {
+        this.statusManager.setConnecting();
+      }
 
-      this.client.on(MQTTEvent.Connect, () => {
+      this.client.__onConnect(this.id, () => {
         this.debug(`MQTT Client : connected`);
 
         this.statusManager.setConnected();
       });
 
-      this.client.on(MQTTEvent.Close, () => {
+      this.client.__onClose(this.id, () => {
         this.debug(`MQTT Client : closed`);
 
         this.statusManager.setDisconnected();
       });
 
-      this.client.on(MQTTEvent.Reconnect, () => {
+      this.client.__onReconnect(this.id, () => {
         this.debug(`MQTT Client : reconnecting`);
 
         this.statusManager.setConnecting();
       });
 
-      this.client.on(MQTTEvent.End, () => {
+      this.client.__onEnd(this.id, () => {
         this.debug(`MQTT Client : end`);
 
         this.statusManager.setDisconnected();
       });
 
-      this.client.on(MQTTEvent.Error, () => {
+      this.client.__onError(this.id, () => {
         this.debug(`MQTT Client : error`);
 
         this.statusManager.setError();
