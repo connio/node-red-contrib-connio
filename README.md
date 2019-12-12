@@ -1,15 +1,14 @@
 # Node-RED nodes for the Connio platform
 
-https://flows.nodered.org/node/node-red-contrib-connio
-
 ## Overview
 
 A collection of Node-RED nodes to communicate with the Connio platform. The first group of nodes (Connio Edge) allows you to bi-directionally communicate with the platform from your devices and gateways. You can use these nodes from a Node-RED instance installed within your device. The second group (Connio Cloud) allows you to connect external services to the platform to consume device data and send device commands easily.
 
 Connio offers an Internet of Things (IoT) platform that enables businesses to quickly connect, integrate and orchestrate their products and operations within IoT ecosystem.
 
-You can register to the Connio platform at https://app.connio.cloud.
-Check the platform documentation at https://docs.connio.com.
+You can register to the Connio platform at https://app.connio.cloud. <br/>
+Check the platform documentation at https://docs.connio.com. <br/>
+See Node-RED tutorial at https://docs.connio.com/docs/integration-node-red.
 
 ## Install
 
