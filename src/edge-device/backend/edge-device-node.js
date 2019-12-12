@@ -7,13 +7,13 @@ const NodeEvent = require('../node-event');
 function makeTopic({ deviceId, propertyName, methodName }) {
   const FIRST_PART = `connio/data/out/devices/${deviceId}`;
 
-  if (propertyName) {
-    return `${FIRST_PART}/properties/${propertyName}`;
-  } else if (methodName) {
+  if (methodName) {
     return `${FIRST_PART}/methods/${methodName}`;
   }
 
-  return `${FIRST_PART}/json`;
+  return propertyName === '_data-feed-format_'
+    ? `${FIRST_PART}/json`
+    : `${FIRST_PART}/properties/${propertyName}`;
 }
 
 module.exports = function createNode(RED) {
