@@ -7,7 +7,7 @@
     "script-loading-error": "Error, please try again"
   },
   "node-config": {
-    "palette-label": "connio mqtt"
+    "palette-label": "connio connector"
   },
   "name-field": {
     "label": "$t(node-red-contrib-connio/connio-edge-mqtt:common.name)",

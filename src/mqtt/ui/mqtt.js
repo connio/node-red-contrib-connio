@@ -228,7 +228,7 @@
     ConnioAPI,
   } = connio;
 
-  const DEFAULT_NAME = 'Connio MQTT';
+  const DEFAULT_NAME = 'listen';
 
   /**
    * @param {{ cause: string, message: string }} error
@@ -308,7 +308,7 @@
         type: 'connio-credentials',
       },
       name: {
-        value: DEFAULT_NAME,
+        value: '',
       },
       account: {
         required: true,
@@ -336,6 +336,7 @@
     label() {
       return this.name || DEFAULT_NAME;
     },
+    paletteLabel: DEFAULT_NAME,
     oneditprepare() {
       let connioApi;
 

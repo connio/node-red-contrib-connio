@@ -412,14 +412,14 @@
 
   const { onEditPrepare, destroyVueApp } = window.connio.edgeGatewayUI;
 
-  const DEFAULT_NAME = 'Connio Edge Gateway';
+  const DEFAULT_NAME = 'gateway';
 
   let EdgeGatewayNode = {
     category: 'Connio Edge',
     color: '#a6bbcf',
     defaults: {
       name: {
-        value: DEFAULT_NAME,
+        value: '',
       },
       accountNodeId: {
         type: 'connio-credentials',
@@ -446,6 +446,10 @@
     outputs: 1,
     icon: 'font-awesome/fa-sitemap',
     label() {
+      if (this.deviceId && !this.name) {
+        return `${this.deviceName}`;
+      }
+
       return this.name || DEFAULT_NAME;
     },
     paletteLabel() {

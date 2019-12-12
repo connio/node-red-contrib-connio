@@ -527,14 +527,14 @@
 
   const { onEditPrepare, destroyVueApp } = window.connio.edgeDeviceUI;
 
-  const DEFAULT_NAME = 'Connio Edge Device';
+  const DEFAULT_NAME = 'device out';
 
   let EdgeDeviceNode = {
     category: 'Connio Edge',
     color: '#a6bbcf',
     defaults: {
       name: {
-        value: DEFAULT_NAME,
+        value: '',
       },
       accountNodeId: {
         type: 'connio-credentials',

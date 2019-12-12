@@ -232,7 +232,7 @@
 
   const { onEditPrepare, destroyVueApp } = window.connio.edgeMqttUI;
 
-  const DEFAULT_NAME = 'Connio Edge MQTT';
+  const DEFAULT_NAME = 'connio connector';
 
   let EdgeMQTTNode = {
     category: 'Connio Edge',
@@ -242,7 +242,7 @@
         type: 'connio-config',
       },
       name: {
-        value: DEFAULT_NAME,
+        value: '',
       },
     },
     inputs: 1,
