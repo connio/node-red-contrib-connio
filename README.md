@@ -35,3 +35,7 @@ Connio nodes will have an Account and Deployment property which must be configur
 **Connio Cloud** nodes are designed to be used by external systems (web services, mobile apps, etc...) for communicating with the platform.
 
 See node documentation to better understand each node usage.
+
+## Copyright and license
+
+Copyright 2019, 2020 Connio Inc. under the MIT License.
