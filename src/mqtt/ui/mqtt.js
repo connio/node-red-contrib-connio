@@ -308,7 +308,7 @@
         type: 'connio-credentials',
       },
       name: {
-        value: DEFAULT_NAME,
+        value: '',
       },
       account: {
         required: true,
