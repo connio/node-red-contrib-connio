@@ -242,7 +242,7 @@
         type: 'connio-config',
       },
       name: {
-        value: DEFAULT_NAME,
+        value: '',
       },
     },
     inputs: 1,
