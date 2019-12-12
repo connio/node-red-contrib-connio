@@ -7,7 +7,8 @@ A collection of Node-RED nodes to communicate with the Connio platform. The firs
 Connio offers an Internet of Things (IoT) platform that enables businesses to quickly connect, integrate and orchestrate their products and operations within IoT ecosystem.
 
 You can register to the Connio platform at https://app.connio.cloud. <br/>
-Check the platform documentation at https://docs.connio.com.
+Check the platform documentation at https://docs.connio.com. <br/>
+See Node-RED tutorial at https://docs.connio.com/docs/integration-node-red.
 
 ## Install
 
