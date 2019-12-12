@@ -22,7 +22,7 @@
     "placeholder": "Select Account"
   },
   "node-config": {
-    "palette-label": "device"
+    "palette-label": "device out"
   },
   "device-field": {
     "label": "$t(node-red-contrib-connio/connio-edge-device:common.device)",
