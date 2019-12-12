@@ -446,6 +446,10 @@
     outputs: 1,
     icon: 'font-awesome/fa-sitemap',
     label() {
+      if (this.deviceId && !this.name) {
+        return `${this.deviceName}`;
+      }
+
       return this.name || DEFAULT_NAME;
     },
     paletteLabel() {
