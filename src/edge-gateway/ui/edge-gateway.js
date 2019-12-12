@@ -412,7 +412,7 @@
 
   const { onEditPrepare, destroyVueApp } = window.connio.edgeGatewayUI;
 
-  const DEFAULT_NAME = 'Connio Edge Gateway';
+  const DEFAULT_NAME = 'gateway';
 
   let EdgeGatewayNode = {
     category: 'Connio Edge',
