@@ -1,3 +1,22 @@
 <script type="text/x-red" data-help-name="connio-edge-gateway">
-  <p>Connio Edge Gateway node</p>
+  <p>This node represents an edge gateway sending data streams to the platform on behalf of the devices linked to it.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt></dt>
+    <dd>It should be a <code>device out</code> node belongs to a device actually linked to this gateway.</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt></dt>
+    <dd>The output should be connected to <code>connio connector</code> node.</dd>
+  </dl>
+
+  <h3>Details</h3>
+  <p>
+    You can link devices to a gateway on Connio Admin Portal as shown below or using Connio Admin API. Note that devices inherited from Gateway profile has a section called "Edge Devices" on the sidebar that you can use to make associations.
+
+    <img src="https://user-images.githubusercontent.com/2756202/70689207-71d23700-1c68-11ea-9d30-a745946651f5.png" alt="Connio Admin Portal — Gateway device example">
+  </p>
 </script>
