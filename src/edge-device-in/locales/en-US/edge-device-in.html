@@ -1,3 +1,22 @@
 <script type="text/x-red" data-help-name="connio-edge-device-in">
-  <p>Connio Edge Device in node</p>
+  <p>This node allows to listen property data sent to the selected device from the platform.</p>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt>
+      msg.topic
+      <span class="property-type">string</span>
+    </dt>
+    <dd>Contains the name of the property</dd>
+
+    <dt>msg.payload</dt>
+    <dd>
+      Contains the received value
+    </dd>
+  </dl>
+
+  <h3>Details</h3>
+  <p>
+    In order for a property data to be sent to the device by the platform, it should be marked as "publish always".
+  </p>
 </script>
