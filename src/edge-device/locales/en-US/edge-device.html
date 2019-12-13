@@ -1,3 +1,20 @@
 <script type="text/x-red" data-help-name="connio-edge-device">
-  <p>Connio Edge Device node</p>
+  <p>This node represents an edge device sending data streams to the platform.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>msg.payload</dt>
+    <dd>
+      Contains the value that will be written into the device property or used as method argument.
+    </dd>
+    <dd>
+      If <code>Data Feed Format</code> is selected instead of a property, provided data is expected to be as <a href="https://docs.connio.com/docs/data-feed">Data Feed Object</a> type, otherwise it should match to property or expected method argument type.
+    </dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt></dt>
+    <dd>The output should be connected to <code>connio connector</code> node or into a <code>gateway</code> node. See <a href="https://docs.connio.com/docs/predefined-device-profiles#section-gateway">Gateway</a> section to understand the difference between connecting devices directly versus connecting though a gateway.</dd>
+  </dl>
 </script>
