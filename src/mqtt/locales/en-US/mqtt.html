@@ -1,3 +1,18 @@
 <script type="text/x-red" data-help-name="connio-mqtt">
-  <p>Connio MQTT node</p>
+  <p>Connects to given Connio host and subscribes to messages from the specified app topics.</p>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt>msg.topic
+        <span class="property-type">string</span>
+    </dt>
+    <dd>contains the topic name</dd>
+
+    <dt class="optional">msg.payload</dt>
+    <dd>contains the value</dd>
+  </dl>
+
+  <h3>Details</h3>
+  The subscription topic can include MQTT wildcards, <code>+</code> for one level, <code>#</code> for multiple levels.
+  See <a href="https://docs.connio.com/docs/device-mirroring-over-mqtt">Device Mirroring section</a> for details.
 </script>
