@@ -74,7 +74,7 @@ module.exports = function createNode(RED) {
         this.statusManager.setConnected();
 
         this.client.subscribe(
-          `connio/data/in/devices/${this.deviceId}/properties/#`,
+          `connio/data/in/devices/${clientId}/properties/#`,
         );
       } else {
         this.statusManager.setConnecting();
@@ -86,7 +86,7 @@ module.exports = function createNode(RED) {
         this.statusManager.setConnected();
 
         this.client.subscribe(
-          `connio/data/in/devices/${this.deviceId}/properties/#`,
+          `connio/data/in/devices/${clientId}/properties/#`,
         );
       });
 

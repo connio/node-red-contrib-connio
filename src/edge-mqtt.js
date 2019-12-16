@@ -1,7 +1,7 @@
 const mqtt = require('mqtt');
 const MQTTEvent = require('./mqtt-event');
 
-let mqttClientManager;
+let mqttClientManagers = {};
 
 class MQTTClientManager {
   constructor(mqttURL, { clientId, username, password }) {
@@ -129,15 +129,15 @@ module.exports = function EdgeMQTTClientManager(
   url,
   { clientId, username, password },
 ) {
-  if (!mqttClientManager) {
-    mqttClientManager = new MQTTClientManager(url, {
+  if (!mqttClientManagers[clientId]) {
+    mqttClientManagers[clientId] = new MQTTClientManager(url, {
       clientId,
       username,
       password,
     });
   }
 
-  mqttClientManager.connect();
+  mqttClientManagers[clientId].connect();
 
-  return mqttClientManager.client;
+  return mqttClientManagers[clientId].client;
 };
