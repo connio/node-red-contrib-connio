@@ -33,7 +33,7 @@ function connioConfig(req, res, next) {
 
   if (!username || !password) {
     req.ctx.RED.log.debug(
-      '@connio/edge-gateway : httpAdmin : connioConfigMiddleware : secret credentials',
+      '@connio/edge-gateway-out : httpAdmin : connioConfigMiddleware : secret credentials',
     );
     let nodeId = req.headers[HeaderKey.CredentialsNodeId];
 
@@ -63,14 +63,14 @@ function gatewayDevices(req, res) {
     .get('/devices?is_a=Gateway', req.ctx.connio)
     .then(({ data }) => {
       req.ctx.RED.log.debug(
-        '@connio/edge-gateway : httpAdmin : /gatewayDevices : SUCCESS',
+        '@connio/edge-gateway-out : httpAdmin : /gatewayDevices : SUCCESS',
       );
 
       res.json(data);
     })
     .catch(({ response = {} }) => {
       req.ctx.RED.log.debug(
-        '@connio/edge-gateway : httpAdmin : /gatewayDevices : ERROR',
+        '@connio/edge-gateway-out : httpAdmin : /gatewayDevices : ERROR',
       );
 
       let { data: { error } = {}, status } = response;
@@ -90,7 +90,7 @@ function deviceApiKey(req, res) {
     .get(`/devices/${deviceId}/apikey`, req.ctx.connio)
     .then(({ data }) => {
       req.ctx.RED.log.debug(
-        '@connio/edge-gateway : httpAdmin : /deviceApiKey : SUCCESS',
+        '@connio/edge-gateway-out : httpAdmin : /deviceApiKey : SUCCESS',
       );
 
       let {
@@ -107,7 +107,7 @@ function deviceApiKey(req, res) {
     })
     .catch(({ response = {} }) => {
       req.ctx.RED.log.debug(
-        '@connio/edge-gateway : httpAdmin : /deviceApiKey : ERROR',
+        '@connio/edge-gateway-out : httpAdmin : /deviceApiKey : ERROR',
       );
 
       let { data: { error } = {}, status } = response;
@@ -120,13 +120,13 @@ module.exports = function createRoutes(RED) {
   let httpAdminRouteList = [
     {
       method: 'get',
-      path: '/connio/edge-gateway/gateway-devices',
+      path: '/connio/edge-gateway-out/gateway-devices',
       controller: gatewayDevices,
       middleware: [connioConfig],
     },
     {
       method: 'get',
-      path: '/connio/edge-gateway/devices/:id/api-key',
+      path: '/connio/edge-gateway-out/devices/:id/api-key',
       controller: deviceApiKey,
       middleware: [connioConfig],
     },

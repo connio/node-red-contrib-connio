@@ -8,7 +8,7 @@
   }
 
   Object.assign(window.connio, {
-    edgeGatewayUI: {},
+    edgeGatewayOutUI: {},
   });
 })(window);
 
@@ -36,7 +36,7 @@
     _get(url, { headers = {}, ...restConfig } = {}) {
       return new Promise((resolve, reject) => {
         $.ajax({
-          url: `connio/edge-gateway${url}`,
+          url: `connio/edge-gateway-out${url}`,
           json: true,
           headers: {
             ...this.headers,
@@ -100,7 +100,7 @@
     }
   }
 
-  Object.assign(connio.edgeGatewayUI, {
+  Object.assign(connio.edgeGatewayOutUI, {
     ConnioAPI,
   });
 })(window.$, window.connio);
@@ -108,7 +108,7 @@
 (function(window, $, RED, connio) {
   'use strict';
 
-  let { ConnioAPI } = connio.edgeGatewayUI;
+  let { ConnioAPI } = connio.edgeGatewayOutUI;
 
   /** @enum {string} */
   const RedEvent = {
@@ -170,9 +170,9 @@
 
     let $name = $('#node-input-name');
 
-    let $vueAppContainer = $('#connio-edge-gateway-vue-app-container');
-    let $vueAppLoader = $('#connio-edge-gateway-vue-app-loader');
-    let $vueAppError = $('#connio-edge-gateway-vue-app-error');
+    let $vueAppContainer = $('#connio-edge-gateway-out-vue-app-container');
+    let $vueAppLoader = $('#connio-edge-gateway-out-vue-app-loader');
+    let $vueAppError = $('#connio-edge-gateway-out-vue-app-error');
 
     let IconicButton = {
       name: 'co-iconic-button',
@@ -201,7 +201,7 @@
         $vueAppContainer.show();
 
         vueApp = new Vue({
-          el: '#connio-edge-gateway-vue-app-container',
+          el: '#connio-edge-gateway-out-vue-app-container',
           components: {
             [IconicButton.name]: IconicButton.def,
           },
@@ -401,7 +401,7 @@
       });
   }
 
-  Object.assign(connio.edgeGatewayUI, {
+  Object.assign(connio.edgeGatewayOutUI, {
     onEditPrepare,
     destroyVueApp,
   });
@@ -410,11 +410,11 @@
 (function(RED) {
   'use strict';
 
-  const { onEditPrepare, destroyVueApp } = window.connio.edgeGatewayUI;
+  const { onEditPrepare, destroyVueApp } = window.connio.edgeGatewayOutUI;
 
-  const DEFAULT_NAME = 'gateway';
+  const DEFAULT_NAME = 'gateway out';
 
-  let EdgeGatewayNode = {
+  let EdgeGatewayOutNode = {
     category: 'Connio Edge',
     color: '#a6bbcf',
     defaults: {
@@ -462,13 +462,13 @@
   };
 
   RED.comms.subscribe(
-    'connio/edge-gateway/input-device-unallowed',
+    'connio/edge-gateway-out/input-device-unallowed',
     (topic, data) => {
       RED.notify(
         `
           <b>Connio</b>
           <br/>
-          Edge Gateway
+          Edge Gateway Out
           <br/><br/>
           <b>${data.deviceName}</b> is not linked to <b>${data.gatewayName}</b>
         `,
@@ -477,5 +477,5 @@
     },
   );
 
-  RED.nodes.registerType('connio-edge-gateway', EdgeGatewayNode);
+  RED.nodes.registerType('connio-edge-gateway-out', EdgeGatewayOutNode);
 })(window.RED);
