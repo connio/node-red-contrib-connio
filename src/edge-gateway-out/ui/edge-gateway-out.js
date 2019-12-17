@@ -148,6 +148,57 @@
     });
   }
 
+  /**
+   * @param {string} type
+   * @returns {Object[]}
+   */
+  function getNodeListByType(type) {
+    let nodeList = [];
+
+    RED.nodes.eachNode((node) => {
+      if (node.type === type) {
+        nodeList.push(node);
+      }
+    });
+
+    return nodeList;
+  }
+
+  /**
+   * @param {Object[]} nodeList
+   * @returns {string[]}
+   */
+  function getDeviceIdListFromNodeList(nodeList) {
+    return nodeList.map((node) => node.deviceId).filter((x) => x);
+  }
+
+  /**
+   * @param {{Object[]}} devices
+   * @param {string[]} selectedDeviceIdList
+   * @returns {Object[]}
+   */
+  function removeSelectedDevicesFromList(devices, selectedDeviceIdList) {
+    let _selectedDeviceIdList = [...selectedDeviceIdList];
+
+    return devices.filter((device) => {
+      if (_selectedDeviceIdList.length === 0) {
+        return true;
+      }
+
+      let isSelected = _selectedDeviceIdList.some(
+        (selectedId) => selectedId === device.id,
+      );
+
+      if (isSelected) {
+        _selectedDeviceIdList = _selectedDeviceIdList.filter(
+          (id) => id !== device.id,
+        );
+      }
+
+      return !isSelected;
+    });
+  }
+
   let vueApp;
 
   function destroyVueApp() {
@@ -345,7 +396,15 @@
                 const response = await this.connioAPIInstance.fetchGatewayDevices();
                 const { results } = response;
 
-                this.deviceList = results;
+                let nodeList = getNodeListByType('connio-edge-gateway-out');
+                let selectedDeviceIdList = getDeviceIdListFromNodeList(
+                  nodeList,
+                ).filter((id) => id !== $deviceId.val());
+
+                this.deviceList = removeSelectedDevicesFromList(
+                  results,
+                  selectedDeviceIdList,
+                );
               } catch (errorList) {
                 this.errorList = errorList;
               } finally {
