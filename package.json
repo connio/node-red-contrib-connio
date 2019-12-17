@@ -25,7 +25,8 @@
       "connio-credentials": "nodes/credentials/credentials.js",
       "connio-edge-device-in": "nodes/edge-device-in/edge-device-in.js",
       "connio-edge-device": "nodes/edge-device/edge-device.js",
-      "connio-edge-gateway": "nodes/edge-gateway/edge-gateway.js",
+      "connio-edge-gateway-in": "nodes/edge-gateway-in/edge-gateway-in.js",
+      "connio-edge-gateway-out": "nodes/edge-gateway-out/edge-gateway-out.js",
       "connio-edge-mqtt": "nodes/edge-mqtt/edge-mqtt.js",
       "connio-mqtt": "nodes/mqtt/mqtt.js"
     }

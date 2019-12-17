@@ -10,15 +10,18 @@
   <input type="text" id="node-input-name" />
 </div>
 
-<div id="connio-edge-gateway-vue-app-loader" data-i18n="common.loading"></div>
+<div
+  id="connio-edge-gateway-out-vue-app-loader"
+  data-i18n="common.loading"
+></div>
 
 <div
-  id="connio-edge-gateway-vue-app-error"
+  id="connio-edge-gateway-out-vue-app-error"
   style="display: none;"
   data-i18n="common.script-loading-error"
 ></div>
 
-<div id="connio-edge-gateway-vue-app-container" style="display: none;">
+<div id="connio-edge-gateway-out-vue-app-container" style="display: none;">
   <div v-show="isLoading" data-i18n="common.loading"></div>
 
   <div v-if="errorList">

@@ -3,11 +3,11 @@ const mqtt = require('../edge-mqtt');
 const MQTTEvent = require('../mqtt-event');
 const NodeEvent = require('../node-event');
 const {
-  EdgeDeviceInNodeStatusManager,
-} = require('./edge-device-in-node-status-manager');
+  EdgeGatewayInNodeStatusManager,
+} = require('./edge-gateway-in-node-status-manager');
 
 module.exports = function createNode(RED) {
-  class EdgeDeviceInNode {
+  class EdgeGatewayInNode {
     constructor(config) {
       RED.nodes.createNode(this, config);
 
@@ -24,7 +24,7 @@ module.exports = function createNode(RED) {
         deviceApiKeyId: config.deviceApiKeyId,
         deviceApiKeySecret: config.deviceApiKeySecret,
 
-        statusManager: new EdgeDeviceInNodeStatusManager(this),
+        statusManager: new EdgeGatewayInNodeStatusManager(this),
         client: undefined,
       });
 
@@ -136,5 +136,5 @@ module.exports = function createNode(RED) {
     }
   }
 
-  RED.nodes.registerType('connio-edge-device-in', EdgeDeviceInNode);
+  RED.nodes.registerType('connio-edge-gateway-in', EdgeGatewayInNode);
 };

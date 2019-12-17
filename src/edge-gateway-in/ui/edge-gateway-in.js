@@ -8,7 +8,7 @@
   }
 
   Object.assign(window.connio, {
-    edgeGatewayUI: {},
+    edgeGatewayInUI: {},
   });
 })(window);
 
@@ -36,7 +36,7 @@
     _get(url, { headers = {}, ...restConfig } = {}) {
       return new Promise((resolve, reject) => {
         $.ajax({
-          url: `connio/edge-gateway${url}`,
+          url: `connio/edge-gateway-in${url}`,
           json: true,
           headers: {
             ...this.headers,
@@ -92,7 +92,7 @@
     }
 
     fetchGatewayDevices() {
-      return this._get('/gateway-devices');
+      return this._get('/devices');
     }
 
     fetchDeviceApiKey(deviceId) {
@@ -100,7 +100,7 @@
     }
   }
 
-  Object.assign(connio.edgeGatewayUI, {
+  Object.assign(connio.edgeGatewayInUI, {
     ConnioAPI,
   });
 })(window.$, window.connio);
@@ -108,7 +108,7 @@
 (function(window, $, RED, connio) {
   'use strict';
 
-  let { ConnioAPI } = connio.edgeGatewayUI;
+  let { ConnioAPI } = connio.edgeGatewayInUI;
 
   /** @enum {string} */
   const RedEvent = {
@@ -164,15 +164,12 @@
     let $deviceName = $('#node-input-deviceName');
     let $deviceApiKeyId = $('#node-input-deviceApiKeyId');
     let $deviceApiKeySecret = $('#node-input-deviceApiKeySecret');
-    let $deviceApiKeyConnectedDevices = $(
-      '#node-input-deviceApiKeyConnectedDevices',
-    );
 
     let $name = $('#node-input-name');
 
-    let $vueAppContainer = $('#connio-edge-gateway-vue-app-container');
-    let $vueAppLoader = $('#connio-edge-gateway-vue-app-loader');
-    let $vueAppError = $('#connio-edge-gateway-vue-app-error');
+    let $vueAppContainer = $('#connio-edge-gateway-in-vue-app-container');
+    let $vueAppLoader = $('#connio-edge-gateway-in-vue-app-loader');
+    let $vueAppError = $('#connio-edge-gateway-in-vue-app-error');
 
     let IconicButton = {
       name: 'co-iconic-button',
@@ -201,7 +198,7 @@
         $vueAppContainer.show();
 
         vueApp = new Vue({
-          el: '#connio-edge-gateway-vue-app-container',
+          el: '#connio-edge-gateway-in-vue-app-container',
           components: {
             [IconicButton.name]: IconicButton.def,
           },
@@ -219,7 +216,6 @@
             deviceName: $deviceName.val(),
             deviceApiKeyId: $deviceApiKeyId.val(),
             deviceApiKeySecret: $deviceApiKeySecret.val(),
-            deviceApiKeyConnectedDevices: $deviceApiKeyConnectedDevices.val(),
 
             deviceList: [],
 
@@ -267,9 +263,6 @@
             deviceApiKeySecret(value) {
               $deviceApiKeySecret.val(value);
             },
-            deviceApiKeyConnectedDevices(value) {
-              $deviceApiKeyConnectedDevices.val(value);
-            },
           },
           methods: {
             resetAppState() {
@@ -282,7 +275,6 @@
 
               this.deviceApiKeyId = '';
               this.deviceApiKeySecret = '';
-              this.deviceApiKeyConnectedDevices = '';
             },
             handleAccountNodeActions(node) {
               if (node && node.type !== 'connio-credentials') {
@@ -359,14 +351,12 @@
                 let {
                   id,
                   secret,
-                  deviceIds,
                 } = await this.connioAPIInstance.fetchDeviceApiKey(
                   this.deviceId,
                 );
 
                 this.deviceApiKeyId = id;
                 this.deviceApiKeySecret = secret;
-                this.deviceApiKeyConnectedDevices = deviceIds.join(';');
               } catch (errorList) {
                 this.errorList = errorList;
               } finally {
@@ -401,7 +391,7 @@
       });
   }
 
-  Object.assign(connio.edgeGatewayUI, {
+  Object.assign(connio.edgeGatewayInUI, {
     onEditPrepare,
     destroyVueApp,
   });
@@ -410,11 +400,11 @@
 (function(RED) {
   'use strict';
 
-  const { onEditPrepare, destroyVueApp } = window.connio.edgeGatewayUI;
+  const { onEditPrepare, destroyVueApp } = window.connio.edgeGatewayInUI;
 
-  const DEFAULT_NAME = 'gateway';
+  const DEFAULT_NAME = 'gateway in';
 
-  let EdgeGatewayNode = {
+  let EdgeDeviceInNode = {
     category: 'Connio Edge',
     color: '#a6bbcf',
     defaults: {
@@ -438,11 +428,7 @@
       deviceApiKeySecret: {
         required: true,
       },
-      deviceApiKeyConnectedDevices: {
-        required: true,
-      },
     },
-    inputs: 1,
     outputs: 1,
     icon: 'font-awesome/fa-sitemap',
     label() {
@@ -461,21 +447,21 @@
     oneditdelete: destroyVueApp,
   };
 
-  RED.comms.subscribe(
-    'connio/edge-gateway/input-device-unallowed',
-    (topic, data) => {
-      RED.notify(
-        `
-          <b>Connio</b>
-          <br/>
-          Edge Gateway
-          <br/><br/>
-          <b>${data.deviceName}</b> is not linked to <b>${data.gatewayName}</b>
-        `,
-        'error',
-      );
-    },
-  );
+  // RED.comms.subscribe(
+  //   'connio/edge-gateway-in/input-device-unallowed',
+  //   (topic, data) => {
+  //     RED.notify(
+  //       `
+  //         <b>Connio</b>
+  //         <br/>
+  //         Edge Gateway
+  //         <br/><br/>
+  //         <b>${data.deviceName}</b> is not linked to <b>${data.gatewayName}</b>
+  //       `,
+  //       'error',
+  //     );
+  //   },
+  // );
 
-  RED.nodes.registerType('connio-edge-gateway', EdgeGatewayNode);
+  RED.nodes.registerType('connio-edge-gateway-in', EdgeDeviceInNode);
 })(window.RED);
