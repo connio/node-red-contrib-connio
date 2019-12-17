@@ -15,7 +15,7 @@ const StatusMessage = {
   Error: 'Error, invalid input devices',
 };
 
-class EdgeGatewayNodeStatusManager extends NodeStatusManager {
+class EdgeGatewayOutNodeStatusManager extends NodeStatusManager {
   constructor(node) {
     super(node);
 
@@ -49,5 +49,5 @@ class EdgeGatewayNodeStatusManager extends NodeStatusManager {
 }
 
 module.exports = {
-  EdgeGatewayNodeStatusManager,
+  EdgeGatewayOutNodeStatusManager,
 };

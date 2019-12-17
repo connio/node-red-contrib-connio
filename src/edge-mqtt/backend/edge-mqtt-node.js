@@ -68,6 +68,12 @@ module.exports = function createNode(RED) {
           username: msg.deviceApiKeyId,
           password: msg.deviceApiKeySecret,
         });
+      } else if (this.client.clientId !== msg.deviceId) {
+        this._connect({
+          clientId: msg.deviceId,
+          username: msg.deviceApiKeyId,
+          password: msg.deviceApiKeySecret,
+        });
       }
 
       this._publish(msg.topic, msg.payload);

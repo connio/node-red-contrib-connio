@@ -1,7 +1,7 @@
 const NodeEvent = require('../node-event');
 const {
-  EdgeGatewayNodeStatusManager,
-} = require('./edge-gateway-node-status-manager');
+  EdgeGatewayOutNodeStatusManager,
+} = require('./edge-gateway-out-node-status-manager');
 
 /**
  * @param {Object} node
@@ -23,7 +23,7 @@ function getInputDevices(node) {
 }
 
 module.exports = function createNode(RED) {
-  class EdgeGatewayNode {
+  class EdgeGatewayOutNode {
     constructor(config) {
       RED.nodes.createNode(this, config);
 
@@ -39,7 +39,7 @@ module.exports = function createNode(RED) {
           : [],
         inputDevices: [],
 
-        statusManager: new EdgeGatewayNodeStatusManager(this),
+        statusManager: new EdgeGatewayOutNodeStatusManager(this),
       });
 
       this.on(NodeEvent.Input, this.onInput);
@@ -63,7 +63,7 @@ module.exports = function createNode(RED) {
             `${deviceId} is not connected to the ${this.deviceName} gateway`,
           );
 
-          RED.comms.publish('connio/edge-gateway/input-device-unallowed', {
+          RED.comms.publish('connio/edge-gateway-out/input-device-unallowed', {
             deviceName,
             gatewayName: this.deviceName,
           });
@@ -98,7 +98,7 @@ module.exports = function createNode(RED) {
      * @param {Function} send
      */
     passthroughMessage(msg, send) {
-      this.debug('EdgeGatewayNode : passthroughMessage');
+      this.debug('EdgeGatewayOutNode : passthroughMessage');
 
       send({
         deviceId: this.deviceId,
@@ -111,5 +111,5 @@ module.exports = function createNode(RED) {
     }
   }
 
-  RED.nodes.registerType('connio-edge-gateway', EdgeGatewayNode);
+  RED.nodes.registerType('connio-edge-gateway-out', EdgeGatewayOutNode);
 };
