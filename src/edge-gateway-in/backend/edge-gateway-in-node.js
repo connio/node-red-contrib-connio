@@ -23,6 +23,11 @@ module.exports = function createNode(RED) {
         deviceName: config.deviceName,
         deviceApiKeyId: config.deviceApiKeyId,
         deviceApiKeySecret: config.deviceApiKeySecret,
+        deviceApiKeyLinkedDevices: config.deviceApiKeyLinkedDevices,
+
+        linkedDevices: config.deviceApiKeyLinkedDevices
+          ? config.deviceApiKeyLinkedDevices.split(';')
+          : [],
 
         statusManager: new EdgeGatewayInNodeStatusManager(this),
         client: undefined,
@@ -73,9 +78,11 @@ module.exports = function createNode(RED) {
       if (this.client.connected) {
         this.statusManager.setConnected();
 
-        this.client.subscribe(
-          `connio/data/in/devices/${clientId}/properties/#`,
-        );
+        for (let deviceId of this.linkedDevices) {
+          this.client.subscribe(
+            `connio/data/in/devices/${deviceId}/properties/#`,
+          );
+        }
       } else {
         this.statusManager.setConnecting();
       }
@@ -85,9 +92,11 @@ module.exports = function createNode(RED) {
 
         this.statusManager.setConnected();
 
-        this.client.subscribe(
-          `connio/data/in/devices/${clientId}/properties/#`,
-        );
+        for (let deviceId of this.linkedDevices) {
+          this.client.subscribe(
+            `connio/data/in/devices/${deviceId}/properties/#`,
+          );
+        }
       });
 
       this.client.__onClose(this.id, () => {
