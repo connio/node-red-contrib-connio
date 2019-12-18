@@ -183,6 +183,8 @@
   }
 
   function onEditPrepare() {
+    let $submitButton = $('#node-dialog-ok');
+
     let $accountSelect = $('#node-input-accountNodeId');
     let $accountLookup = $('#node-input-lookup-accountNodeId');
 
@@ -306,9 +308,21 @@
             },
             propertyName(value) {
               $propertyName.val(value);
+
+              if (value || (!value && this.methodName)) {
+                $submitButton.show();
+              } else {
+                $submitButton.hide();
+              }
             },
             methodName(value) {
               $methodName.val(value);
+
+              if (value || (!value && this.propertyName)) {
+                $submitButton.show();
+              } else {
+                $submitButton.hide();
+              }
             },
             outputType(value) {
               switch (value) {
@@ -488,6 +502,10 @@
             }
           },
           async mounted() {
+            if (!this.propertyName && !this.methodName) {
+              $submitButton.hide();
+            }
+
             if (this.accountNodeId && this.accountNodeId !== '_ADD_') {
               let requests = [this.fetchDevices()];
 
