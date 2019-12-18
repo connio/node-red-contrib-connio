@@ -215,6 +215,7 @@
     let $deviceName = $('#node-input-deviceName');
     let $deviceApiKeyId = $('#node-input-deviceApiKeyId');
     let $deviceApiKeySecret = $('#node-input-deviceApiKeySecret');
+    let $deviceApiKeyLinkedDevices = $('#node-input-deviceApiKeyLinkedDevices');
 
     let $name = $('#node-input-name');
 
@@ -267,6 +268,7 @@
             deviceName: $deviceName.val(),
             deviceApiKeyId: $deviceApiKeyId.val(),
             deviceApiKeySecret: $deviceApiKeySecret.val(),
+            deviceApiKeyLinkedDevices: $deviceApiKeyLinkedDevices.val(),
 
             deviceList: [],
 
@@ -314,6 +316,9 @@
             deviceApiKeySecret(value) {
               $deviceApiKeySecret.val(value);
             },
+            deviceApiKeyLinkedDevices(value) {
+              $deviceApiKeyLinkedDevices.val(value);
+            },
           },
           methods: {
             resetAppState() {
@@ -326,6 +331,7 @@
 
               this.deviceApiKeyId = '';
               this.deviceApiKeySecret = '';
+              this.deviceApiKeyLinkedDevices = '';
             },
             handleAccountNodeActions(node) {
               if (node && node.type !== 'connio-credentials') {
@@ -410,12 +416,14 @@
                 let {
                   id,
                   secret,
+                  linkedIds,
                 } = await this.connioAPIInstance.fetchDeviceApiKey(
                   this.deviceId,
                 );
 
                 this.deviceApiKeyId = id;
                 this.deviceApiKeySecret = secret;
+                this.deviceApiKeyLinkedDevices = linkedIds.join(';');
               } catch (errorList) {
                 this.errorList = errorList;
               } finally {
@@ -485,6 +493,9 @@
       },
       /** @todo Move to `credentials` */
       deviceApiKeySecret: {
+        required: true,
+      },
+      deviceApiKeyLinkedDevices: {
         required: true,
       },
     },

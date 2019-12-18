@@ -93,11 +93,12 @@ function deviceApiKey(req, res) {
         '@connio/edge-gateway-in : httpAdmin : /deviceApiKey : SUCCESS',
       );
 
-      let { id, secret } = data;
+      let { id, secret, context: { ids = [] } = {} } = data;
 
       res.json({
         id,
         secret,
+        linkedIds: ids,
       });
     })
     .catch(({ response = {} }) => {
