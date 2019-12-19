@@ -364,7 +364,7 @@
             .empty()
             .append(
               makeDefaultOption(
-                this._('api-field.empty', {
+                this._('api-client-field.empty', {
                   entity: this._('glossary.api-client'),
                 }),
               ),
