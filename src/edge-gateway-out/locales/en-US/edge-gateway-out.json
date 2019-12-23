@@ -17,6 +17,7 @@
     "placeholder": "Select Account"
   },
   "device-field": {
+    "empty": "No gateway found",
     "label": "$t(node-red-contrib-connio/connio-edge-gateway-out:common.gateway)",
     "placeholder": "$t(node-red-contrib-connio/connio-edge-gateway-out:common.select) $t(node-red-contrib-connio/connio-edge-gateway-out:common.gateway)"
   },
