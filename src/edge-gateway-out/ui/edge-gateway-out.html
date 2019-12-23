@@ -94,13 +94,22 @@
             id="deviceId"
             style="width: 100%;"
             v-model="deviceId"
-            :disabled="!accountNodeId || accountNodeId === '_ADD_'"
+            :disabled="!accountNodeId || accountNodeId === '_ADD_' || deviceList.length === 0"
           >
             <option
               value=""
               data-i18n="device-field.placeholder"
               selected
               disabled
+              v-if="deviceList.length > 0"
+            ></option>
+
+            <option
+              value=""
+              data-i18n="device-field.empty"
+              selected
+              disabled
+              v-else
             ></option>
 
             <option

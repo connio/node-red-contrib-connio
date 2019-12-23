@@ -93,13 +93,22 @@
             id="deviceId"
             style="width: 100%;"
             v-model="deviceId"
-            :disabled="!accountNodeId || accountNodeId === '_ADD_'"
+            :disabled="!accountNodeId || accountNodeId === '_ADD_' || deviceList.length === 0"
           >
             <option
               value=""
               data-i18n="device-field.placeholder"
               selected
               disabled
+              v-if="deviceList.length > 0"
+            ></option>
+
+            <option
+              value=""
+              data-i18n="device-field.empty"
+              selected
+              disabled
+              v-else
             ></option>
 
             <option
@@ -172,9 +181,21 @@
           v-model="propertyName"
           v-bind:disabled="!propertyList.length"
         >
-          <option value="" selected disabled>
-            {{ propertyList.length ? 'Select Property' : 'No Property found' }}
-          </option>
+          <option
+            value=""
+            data-i18n="property-field.placeholder"
+            selected
+            disabled
+            v-if="propertyList.length > 0"
+          ></option>
+
+          <option
+            value=""
+            data-i18n="property-field.empty"
+            selected
+            disabled
+            v-else
+          ></option>
 
           <option
             value="_data-feed-format_"
@@ -204,9 +225,21 @@
           v-model="methodName"
           v-bind:disabled="!methodList.length"
         >
-          <option value="" selected disabled>
-            {{ methodList.length ? 'Select Method' : 'No Method found' }}
-          </option>
+          <option
+            value=""
+            data-i18n="method-field.placeholder"
+            selected
+            disabled
+            v-if="methodList.length > 0"
+          ></option>
+
+          <option
+            value=""
+            data-i18n="method-field.empty"
+            selected
+            disabled
+            v-else
+          ></option>
 
           <option
             v-for="method in methodList"
