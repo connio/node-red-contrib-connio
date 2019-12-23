@@ -15,6 +15,7 @@ module.exports = function createNode(RED) {
       Object.assign(this, {
         mqttURL: mqttUrl,
 
+        clientIds: new Set(),
         connection: undefined,
         statusManager: new EdgeMQTTNodeStatusManager(this),
       });
@@ -141,6 +142,8 @@ module.exports = function createNode(RED) {
         })
         .connect(this.id);
 
+      this.clientIds.add(clientId);
+
       if (this.connection.client && this.connection.client.connected) {
         this.statusManager.setConnected();
       } else {
@@ -156,7 +159,11 @@ module.exports = function createNode(RED) {
       this.connection.onClose(this.id, () => {
         this.debug(`MQTT Client : closed`);
 
-        this.statusManager.setDisconnected();
+        this.clientIds.delete(clientId);
+
+        if (this.clientIds.size === 0) {
+          this.statusManager.setDisconnected();
+        }
       });
 
       this.connection.onReconnect(this.id, () => {
