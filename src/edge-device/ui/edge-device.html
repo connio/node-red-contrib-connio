@@ -225,9 +225,21 @@
           v-model="methodName"
           v-bind:disabled="!methodList.length"
         >
-          <option value="" selected disabled>
-            {{ methodList.length ? 'Select Method' : 'No method found' }}
-          </option>
+          <option
+            value=""
+            data-i18n="method-field.placeholder"
+            selected
+            disabled
+            v-if="methodList.length > 0"
+          ></option>
+
+          <option
+            value=""
+            data-i18n="method-field.empty"
+            selected
+            disabled
+            v-else
+          ></option>
 
           <option
             v-for="method in methodList"

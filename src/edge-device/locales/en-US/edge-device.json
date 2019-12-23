@@ -41,6 +41,7 @@
     "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.select) $t(node-red-contrib-connio/connio-edge-device:common.property)"
   },
   "method-field": {
+    "empty": "No method found",
     "label": "$t(node-red-contrib-connio/connio-edge-device:common.method)",
     "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.select) $t(node-red-contrib-connio/connio-edge-device:common.method)"
   },
