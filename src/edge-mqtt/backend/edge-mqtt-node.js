@@ -1,4 +1,4 @@
-const mqtt = require('../edge-mqtt');
+const MQTTConnectionManager = require('../mqtt-connection-manager');
 
 const NodeEvent = require('../node-event');
 const {
@@ -15,7 +15,7 @@ module.exports = function createNode(RED) {
       Object.assign(this, {
         mqttURL: mqttUrl,
 
-        client: undefined,
+        connection: undefined,
         statusManager: new EdgeMQTTNodeStatusManager(this),
       });
 
@@ -30,6 +30,10 @@ module.exports = function createNode(RED) {
 
       if (this.mqttURL) {
         this.statusManager.setListening();
+
+        if (this.connection) {
+          this.statusManager.setConnected();
+        }
       } else {
         this.debug('onInit: No mqttURL provided');
 
@@ -40,8 +44,8 @@ module.exports = function createNode(RED) {
     onClose() {
       this.debug(NodeEvent.Close);
 
-      if (this.client) {
-        this.client.__disconnect(this.id);
+      if (this.connection) {
+        MQTTConnectionManager().disconnectAll(this.id);
       }
     }
 
@@ -62,13 +66,25 @@ module.exports = function createNode(RED) {
     addMessage(msg) {
       this.debug(`addMessage : ${msg.payload}`);
 
-      if (!this.client) {
+      if (!this.connection) {
+        this.debug(`new connection : ${msg.deviceId}`);
+
         this._connect({
           clientId: msg.deviceId,
           username: msg.deviceApiKeyId,
           password: msg.deviceApiKeySecret,
         });
-      } else if (this.client.clientId !== msg.deviceId) {
+      } else if (this.connection.clientId !== msg.deviceId) {
+        this.debug(`new deviceId : ${msg.deviceId}`);
+
+        this._connect({
+          clientId: msg.deviceId,
+          username: msg.deviceApiKeyId,
+          password: msg.deviceApiKeySecret,
+        });
+      } else if (this.connection.client.disconnected) {
+        this.debug('client was disconnected');
+
         this._connect({
           clientId: msg.deviceId,
           username: msg.deviceApiKeyId,
@@ -95,7 +111,7 @@ module.exports = function createNode(RED) {
         this.statusManager.setError();
       }
 
-      this.client.publish(topic, formattedPayload, (error) => {
+      this.connection.client.publish(topic, formattedPayload, (error) => {
         if (error) {
           this.debug('_publish : error');
 
@@ -117,43 +133,45 @@ module.exports = function createNode(RED) {
     _connect({ clientId, username, password }) {
       this.debug('_connect');
 
-      this.client = mqtt(this.mqttURL, {
-        clientId,
-        username,
-        password,
-      });
+      this.connection = MQTTConnectionManager()
+        .useConnection(this.mqttURL, {
+          clientId,
+          username,
+          password,
+        })
+        .connect(this.id);
 
-      if (this.client.connected) {
+      if (this.connection.client && this.connection.client.connected) {
         this.statusManager.setConnected();
       } else {
         this.statusManager.setConnecting();
       }
 
-      this.client.__onConnect(this.id, () => {
+      this.connection.onConnect(this.id, () => {
         this.debug(`MQTT Client : connected`);
 
         this.statusManager.setConnected();
       });
 
-      this.client.__onClose(this.id, () => {
+      this.connection.onClose(this.id, () => {
         this.debug(`MQTT Client : closed`);
 
         this.statusManager.setDisconnected();
       });
 
-      this.client.__onReconnect(this.id, () => {
+      this.connection.onReconnect(this.id, () => {
         this.debug(`MQTT Client : reconnecting`);
 
         this.statusManager.setConnecting();
       });
 
-      this.client.__onEnd(this.id, () => {
+      this.connection.onEnd(this.id, () => {
         this.debug(`MQTT Client : end`);
 
         this.statusManager.setDisconnected();
       });
 
-      this.client.__onError(this.id, () => {
+      this.connection.onError(this.id, () => {
         this.debug(`MQTT Client : error`);
 
         this.statusManager.setError();

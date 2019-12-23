@@ -1,4 +1,6 @@
+const MQTTConnectionManager = require('../mqtt-connection-manager');
 const NodeEvent = require('../node-event');
+const { getOutputNodeId, getLeftoverNodes } = require('../red-nodes-utils');
 const {
   EdgeGatewayOutNodeStatusManager,
 } = require('./edge-gateway-out-node-status-manager');
@@ -40,6 +42,7 @@ module.exports = function createNode(RED) {
         inputDevices: [],
 
         statusManager: new EdgeGatewayOutNodeStatusManager(this),
+        edgeMqttNodeId: undefined,
       });
 
       this.on(NodeEvent.Input, this.onInput);
@@ -50,6 +53,8 @@ module.exports = function createNode(RED) {
 
     onInit() {
       this.debug('init');
+
+      this._setupEdgeMQTTNodeId();
 
       Object.assign(this, {
         inputDevices: getInputDevices(this),
@@ -77,6 +82,10 @@ module.exports = function createNode(RED) {
 
     onClose() {
       this.debug(NodeEvent.Close);
+
+      if (this.edgeMqttNodeId) {
+        this.tryDisconnect();
+      }
     }
 
     onInput(msg, send /* , done */) {
@@ -108,6 +117,46 @@ module.exports = function createNode(RED) {
         topic: msg.topic,
         payload: msg.payload,
       });
+    }
+
+    async _setupEdgeMQTTNodeId() {
+      try {
+        let nodeId = await getOutputNodeId('connio-edge-mqtt', {
+          flow: this._flow,
+          wires: this.wires,
+        });
+
+        Object.assign(this, {
+          edgeMqttNodeId: nodeId,
+        });
+      } catch (error) {
+        this.debug(`[error] : _setupEdgeMQTTNodeId : ${error}`);
+      }
+    }
+
+    async tryDisconnect() {
+      try {
+        let leftoverNodes = await getLeftoverNodes('connio-edge-gateway-out', {
+          flow: this._flow,
+          clientId: this.deviceId,
+          edgeMqttNodeId: this.edgeMqttNodeId,
+        });
+
+        if (leftoverNodes.length > 0) {
+          this.debug('similar nodes found, keep connection open');
+
+          return;
+        }
+
+        this.debug('no more similar nodes, disconnecting');
+
+        MQTTConnectionManager().disconnectFromOutputNode(
+          this.edgeMqttNodeId,
+          this.deviceId,
+        );
+      } catch (error) {
+        this.debug(`[error] : tryDisconnect : ${error}`);
+      }
     }
   }
 
