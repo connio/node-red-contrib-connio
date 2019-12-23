@@ -181,9 +181,21 @@
           v-model="propertyName"
           v-bind:disabled="!propertyList.length"
         >
-          <option value="" selected disabled>
-            {{ propertyList.length ? 'Select Property' : 'No property found' }}
-          </option>
+          <option
+            value=""
+            data-i18n="property-field.placeholder"
+            selected
+            disabled
+            v-if="propertyList.length > 0"
+          ></option>
+
+          <option
+            value=""
+            data-i18n="property-field.empty"
+            selected
+            disabled
+            v-else
+          ></option>
 
           <option
             value="_data-feed-format_"

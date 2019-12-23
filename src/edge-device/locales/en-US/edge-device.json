@@ -35,6 +35,7 @@
     "property-label": "$t(node-red-contrib-connio/connio-edge-device:common.property)"
   },
   "property-field": {
+    "empty": "No property found",
     "data-feed-format": "$t(node-red-contrib-connio/connio-edge-device:common.data-feed-format)",
     "label": "$t(node-red-contrib-connio/connio-edge-device:common.property)",
     "placeholder": "$t(node-red-contrib-connio/connio-edge-device:common.select) $t(node-red-contrib-connio/connio-edge-device:common.property)"
