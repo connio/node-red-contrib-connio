@@ -332,7 +332,7 @@
     },
     inputs: 0,
     outputs: 1,
-    icon: 'connio.png',
+    icon: 'connio.svg',
     label() {
       return this.name || DEFAULT_NAME;
     },
