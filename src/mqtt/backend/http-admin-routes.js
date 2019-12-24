@@ -168,6 +168,7 @@ function apiKey(req, res) {
         id,
         secret,
         appList: context.type === 'app' ? context.ids : undefined,
+        deviceList: context.type === 'device' ? context.ids : undefined,
       });
     })
     .catch(({ response = {} }) => {
@@ -192,12 +193,61 @@ function app(req, res) {
       req.ctx.RED.log.debug('@connio/mqtt : httpAdmin : /app : SUCCESS');
 
       res.json({
+        id: data.id,
         name: data.name,
         friendlyName: data.friendlyName,
       });
     })
     .catch(({ response = {} }) => {
       req.ctx.RED.log.debug('@connio/mqtt : httpAdmin : /app : ERROR');
+
+      let { data: { error } = {}, status } = response;
+
+      res.status(status).json(error);
+    });
+}
+
+/**
+ * @param {Object} req
+ * @param {Object} res
+ */
+function device(req, res) {
+  let { id } = req.query;
+
+  return axios
+    .get(`/devices/${id}`, req.ctx.connio)
+    .then(({ data }) => {
+      req.ctx.RED.log.debug('@connio/mqtt : httpAdmin : /device : SUCCESS');
+
+      res.json({
+        id: data.id,
+        name: data.name,
+        friendlyName: data.friendlyName,
+      });
+    })
+    .catch(({ response = {} }) => {
+      req.ctx.RED.log.debug('@connio/mqtt : httpAdmin : /device : ERROR');
+
+      let { data: { error } = {}, status } = response;
+
+      res.status(status).json(error);
+    });
+}
+
+/**
+ * @param {Object} req
+ * @param {Object} res
+ */
+function apps(req, res) {
+  return axios
+    .get(`/apps`, req.ctx.connio)
+    .then(({ data }) => {
+      req.ctx.RED.log.debug('@connio/mqtt : httpAdmin : /apps : SUCCESS');
+
+      res.json(data);
+    })
+    .catch(({ response = {} }) => {
+      req.ctx.RED.log.debug('@connio/mqtt : httpAdmin : /apps : ERROR');
 
       let { data: { error } = {}, status } = response;
 
@@ -220,7 +270,19 @@ module.exports = function createRoutes(RED) {
     },
     {
       method: 'get',
+      path: '/connio/api-clients',
+      controller: apiClients,
+      middleware: [connioConfig],
+    },
+    {
+      method: 'get',
       path: '/api-key',
+      controller: apiKey,
+      middleware: [connioConfig],
+    },
+    {
+      method: 'get',
+      path: '/connio/api-key',
       controller: apiKey,
       middleware: [connioConfig],
     },
@@ -228,6 +290,24 @@ module.exports = function createRoutes(RED) {
       method: 'get',
       path: '/app',
       controller: app,
+      middleware: [connioConfig],
+    },
+    {
+      method: 'get',
+      path: '/connio/app',
+      controller: app,
+      middleware: [connioConfig],
+    },
+    {
+      method: 'get',
+      path: '/connio/apps',
+      controller: apps,
+      middleware: [connioConfig],
+    },
+    {
+      method: 'get',
+      path: '/connio/device',
+      controller: device,
       middleware: [connioConfig],
     },
   ];

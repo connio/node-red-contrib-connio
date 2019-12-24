@@ -21,6 +21,7 @@
   },
   "node-red": {
     "nodes": {
+      "connio-cloud-write-property": "nodes/cloud-write-property/cloud-write-property.js",
       "connio-config": "nodes/config/config.js",
       "connio-credentials": "nodes/credentials/credentials.js",
       "connio-edge-device-in": "nodes/edge-device-in/edge-device-in.js",
