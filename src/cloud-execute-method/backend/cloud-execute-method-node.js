@@ -16,7 +16,7 @@ module.exports = function createNode(RED) {
 
         targetType: config.targetType,
         targetId: config.targetId,
-        propertyId: config.propertyId,
+        methodId: config.methodId,
       });
 
       this.onInit();
@@ -55,19 +55,19 @@ module.exports = function createNode(RED) {
        */
       let _send = send || this.send.bind(this);
 
-      this.sendPropertyValue(msg, _send, done);
+      this.executeMethod(msg, _send, done);
     }
 
-    sendPropertyValue(msg, send, done) {
+    executeMethod(msg, send, done) {
       let [username, password] = this.requesterKey.split(':');
 
       let targetType = this.targetType === '1' ? 'apps' : 'devices';
 
       return axios
         .post(
-          `/${targetType}/${this.targetId}/methods/${this.propertyId}`,
+          `/${targetType}/${this.targetId}/methods/${this.methodId}`,
           {
-            value: msg.playload,
+            value: msg.payload,
           },
           {
             baseURL: this.dataApiUrl,
@@ -82,9 +82,11 @@ module.exports = function createNode(RED) {
             payload: data,
           });
         })
-        .catch((error) => {
+        .catch((error = {}) => {
+          let { response: { data } = {} } = error;
+
           send({
-            payload: error,
+            payload: data || error,
           });
         })
         .finally(done);
