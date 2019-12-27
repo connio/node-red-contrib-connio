@@ -21,6 +21,7 @@
   },
   "node-red": {
     "nodes": {
+      "connio-cloud-execute-method": "nodes/cloud-execute-method/cloud-execute-method.js",
       "connio-cloud-write-property": "nodes/cloud-write-property/cloud-write-property.js",
       "connio-config": "nodes/config/config.js",
       "connio-credentials": "nodes/credentials/credentials.js",
