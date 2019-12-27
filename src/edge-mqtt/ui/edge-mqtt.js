@@ -246,7 +246,7 @@
       },
     },
     inputs: 1,
-    icon: 'connio.png',
+    icon: 'connio.svg',
     align: 'right',
     label() {
       return this.name || DEFAULT_NAME;
