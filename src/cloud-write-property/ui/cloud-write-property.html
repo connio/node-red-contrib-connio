@@ -343,6 +343,17 @@
             </option>
 
             <option
+              value="_DATA_FEED_FORMAT_"
+              data-i18n="property-field.data-feed-format"
+            >
+              Data Feed Format
+            </option>
+
+            <option value="separator" selected disabled>
+              — — — — — — — — — — —
+            </option>
+
+            <option
               v-for="property in propertyList"
               v-bind:key="property.id"
               v-bind:value="property.id"
