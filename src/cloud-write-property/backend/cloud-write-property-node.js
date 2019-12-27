@@ -61,19 +61,51 @@ module.exports = function createNode(RED) {
     sendPropertyValue(msg, send, done) {
       let [username, password] = this.requesterKey.split(':');
 
-      let targetType = this.targetType === '1' ? 'apps' : 'devices';
+      /**
+       * @param {{ type: string, id: string }} target
+       * @param {string} propertyId
+       * @returns {string}
+       */
+      function makeUrl(target, propertyId) {
+        let targetType = target.type === '1' ? 'apps' : 'devices';
+
+        if (propertyId === '_DATA_FEED_FORMAT_') {
+          return `/${targetType}/${target.id}/properties`;
+        }
+
+        return `/${targetType}/${target.id}/properties/${propertyId}`;
+      }
+
+      /**
+       * @param {string} propertyId
+       * @param {any} payload
+       * @returns {{ dps: { t: string, v: any }[] }}
+       */
+      function makePayload(propertyId, payload) {
+        if (propertyId === '_DATA_FEED_FORMAT_') {
+          return payload;
+        }
+
+        return {
+          dps: [
+            {
+              t: new Date().toISOString(),
+              v: payload,
+            },
+          ],
+        };
+      }
 
       return axios
         .post(
-          `/${targetType}/${this.targetId}/properties/${this.propertyId}`,
-          {
-            dps: [
-              {
-                t: new Date().toISOString(),
-                v: msg.payload,
-              },
-            ],
-          },
+          makeUrl(
+            {
+              type: this.targetType,
+              id: this.targetId,
+            },
+            this.propertyId,
+          ),
+          makePayload(this.propertyId, msg.payload),
           {
             baseURL: this.dataApiUrl,
             auth: {
