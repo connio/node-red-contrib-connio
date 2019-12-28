@@ -1,16 +1,22 @@
 {
   "common": {
     "account": "Account",
+    "app": "App",
+    "device": "Device",
     "loading": "Loading, please wait…",
     "name": "$t(node-red:common.label.name)",
-    "script-loading-error": "Error, please try again"
+    "property": "Property",
+    "requester": "Requester",
+    "script-loading-error": "Error, please try again",
+    "target": "Target"
   },
   "error": {
     "header": "$t(node-red-contrib-connio/connio-edge-device:common.error)",
     "try-again-button": "$t(node-red-contrib-connio/connio-edge-device:common.try-again)"
   },
   "account-field": {
-    "placeholder": "Select Account"
+    "label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.account)",
+    "placeholder": "Select account"
   },
   "name-field": {
     "label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.name)",
@@ -18,5 +24,28 @@
   },
   "node-config": {
     "palette-label": "write property"
+  },
+  "requester-field": {
+    "label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.requester)",
+    "placeholder": "Select requester"
+  },
+  "target-type-field": {
+    "app-label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.app)",
+    "device-label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.device)",
+    "label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.target)"
+  },
+  "target-field": {
+    "app-empty": "No app found",
+    "app-label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.app)",
+    "app-placeholder": "Select app",
+    "device-empty": "No device found",
+    "device-label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.device)",
+    "device-placeholder": "Select device"
+  },
+  "property-field": {
+    "data-feed-format": "Data Feed Format",
+    "empty": "No property found",
+    "label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.property)",
+    "placeholder": "Select property"
   }
 }

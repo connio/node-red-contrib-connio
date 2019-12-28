@@ -1,22 +1,50 @@
 {
   "common": {
     "account": "Account",
+    "app": "App",
+    "device": "Device",
     "loading": "Loading, please wait…",
+    "method": "Method",
     "name": "$t(node-red:common.label.name)",
-    "script-loading-error": "Error, please try again"
+    "requester": "Requester",
+    "script-loading-error": "Error, please try again",
+    "target": "Target"
   },
   "error": {
     "header": "$t(node-red-contrib-connio/connio-edge-device:common.error)",
     "try-again-button": "$t(node-red-contrib-connio/connio-edge-device:common.try-again)"
   },
   "account-field": {
-    "placeholder": "Select Account"
+    "label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.account)",
+    "placeholder": "Select account"
   },
   "name-field": {
-    "label": "$t(node-red-contrib-connio/connio-cloud-write-property:common.name)",
-    "placeholder": "$t(node-red-contrib-connio/connio-cloud-write-property:common.name)"
+    "label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.name)",
+    "placeholder": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.name)"
   },
   "node-config": {
     "palette-label": "execute method"
+  },
+  "requester-field": {
+    "label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.requester)",
+    "placeholder": "Select requester"
+  },
+  "target-type-field": {
+    "app-label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.app)",
+    "device-label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.device)",
+    "label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.target)"
+  },
+  "target-field": {
+    "app-empty": "No app found",
+    "app-label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.app)",
+    "app-placeholder": "Select app",
+    "device-empty": "No device found",
+    "device-label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.device)",
+    "device-placeholder": "Select device"
+  },
+  "method-field": {
+    "empty": "No method found",
+    "label": "$t(node-red-contrib-connio/connio-cloud-execute-method:common.method)",
+    "placeholder": "Select method"
   }
 }
