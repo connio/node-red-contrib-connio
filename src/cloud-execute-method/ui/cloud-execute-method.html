@@ -77,7 +77,7 @@
     }"
   >
     <div class="form-row">
-      <label for="accountNodeId" data-i18n="common.account"></label>
+      <label for="accountNodeId" data-i18n="account-field.label"></label>
 
       <div
         style="display: inline-block; position: relative; width: 70%; height: 20px;"
@@ -116,9 +116,7 @@
     </div>
 
     <div class="form-row">
-      <label for="requesterId" data-i18n="requester-field.label">
-        Requester
-      </label>
+      <label for="requesterId" data-i18n="requester-field.label"></label>
 
       <div
         style="display: inline-block; position: relative; width: 70%; height: 20px;"
@@ -136,11 +134,9 @@
               data-i18n="requester-field.placeholder"
               selected
               disabled
-            >
-              Select requester
-            </option>
+            ></option>
 
-            <option value="_CURRENT_USER_" data-i18n="requester-field.user">
+            <option value="_CURRENT_USER_">
               {{ currentUser }}
             </option>
 
@@ -177,7 +173,7 @@
       class="co-form-row"
       style="display: flex; align-items: baseline; margin-bottom: 0.75rem; color: #555;"
     >
-      <div style="width: 100px;" data-i18n="type-field.label">Target</div>
+      <div style="width: 100px;" data-i18n="target-type-field.label"></div>
 
       <label
         for="app"
@@ -193,9 +189,7 @@
           :disabled="!requesterId"
         />
 
-        <span data-i18n="type-field.property-label">
-          App
-        </span>
+        <span data-i18n="target-type-field.app-label"></span>
       </label>
 
       <label
@@ -212,24 +206,22 @@
           :disabled="!requesterId"
         />
 
-        <span data-i18n="type-field.method-label">
-          Device
-        </span>
+        <span data-i18n="target-type-field.device-label"></span>
       </label>
     </div>
 
     <div class="form-row" v-show="targetType">
       <label
         for="targetId"
-        data-i18n="target-field.label"
+        data-i18n="target-field.app-label"
         v-if="targetType === TargetType.App"
-      >
-        App
-      </label>
+      ></label>
 
-      <label for="targetId" data-i18n="target-field.label" v-else>
-        Device
-      </label>
+      <label
+        for="targetId"
+        data-i18n="target-field.device-label"
+        v-else
+      ></label>
 
       <div
         style="display: inline-block; position: relative; width: 70%; height: 20px;"
@@ -242,49 +234,37 @@
             v-model="targetId"
             :disabled="targetList.length === 0"
           >
-            <template v-if="targetList.length > 0 || !requesterId || isLoading">
-              <option
-                value=""
-                data-i18n="target-field.placeholder"
-                selected
-                disabled
-                v-if="targetType === TargetType.App"
-              >
-                Select app
-              </option>
+            <option
+              value=""
+              data-i18n="target-field.app-placeholder"
+              selected
+              disabled
+              v-if="targetType === TargetType.App && (targetList.length > 0 || !requesterId || isLoading)"
+            ></option>
 
-              <option
-                value=""
-                data-i18n="target-field.placeholder"
-                selected
-                disabled
-                v-else
-              >
-                Select device
-              </option>
-            </template>
+            <option
+              value=""
+              data-i18n="target-field.device-placeholder"
+              selected
+              disabled
+              v-if="targetType === TargetType.Device && (targetList.length > 0 || !requesterId || isLoading)"
+            ></option>
 
-            <template v-else>
-              <option
-                value=""
-                data-i18n="property-field.empty"
-                selected
-                disabled
-                v-if="targetType === TargetType.App"
-              >
-                No app found
-              </option>
+            <option
+              value=""
+              data-i18n="target-field.app-empty"
+              selected
+              disabled
+              v-if="targetType === TargetType.App && targetList.length === 0"
+            ></option>
 
-              <option
-                value=""
-                data-i18n="property-field.empty"
-                selected
-                disabled
-                v-else
-              >
-                No device found
-              </option>
-            </template>
+            <option
+              value=""
+              data-i18n="target-field.device-empty"
+              selected
+              disabled
+              v-if="targetType === TargetType.Device && targetList.length === 0"
+            ></option>
 
             <option
               v-for="target in targetList"
@@ -307,9 +287,7 @@
     </div>
 
     <div class="form-row" v-show="targetType">
-      <label for="methodId" data-i18n="target-field.label">
-        Method
-      </label>
+      <label for="methodId" data-i18n="method-field.label"></label>
 
       <div
         style="display: inline-block; position: relative; width: 70%; height: 20px;"
@@ -324,23 +302,19 @@
           >
             <option
               value=""
-              data-i18n="target-field.placeholder"
+              data-i18n="method-field.placeholder"
               selected
               disabled
               v-if="methodList.length > 0 || !targetId || isLoading"
-            >
-              Select method
-            </option>
+            ></option>
 
             <option
               value=""
-              data-i18n="property-field.empty"
+              data-i18n="method-field.empty"
               selected
               disabled
               v-else
-            >
-              No method found
-            </option>
+            ></option>
 
             <option
               v-for="method in methodList"
