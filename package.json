@@ -15,7 +15,8 @@
     }
   ],
   "scripts": {
-    "prepublishOnly": "npx gulp build",
+    "build": "npx gulp build",
+    "prepublishOnly": "npm run build",
     "serve": "node-red -u .node-red",
     "start": "cross-env NODE_ENV=development npx gulp start"
   },
